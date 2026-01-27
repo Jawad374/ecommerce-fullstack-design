@@ -153,7 +153,7 @@ export default function Header() {
         
         {/* Drawer Content */}
         <div 
-          className={`absolute left-0 top-0 h-full w-[280px] bg-white transition-transform duration-300 transform ${
+          className={`absolute left-0 top-0 h-full w-70 bg-white transition-transform duration-300 transform ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
