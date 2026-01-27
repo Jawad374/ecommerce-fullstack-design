@@ -15,7 +15,7 @@ export default function SupplierCard() {
 
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-2 text-gray-600">
-            <img src="https://flagcdn.com/w20/de.png" alt="DE" className="w-5 h-3" />
+            <img src="/Image/flags/Property 1=DE.png" alt="DE" className="w-5 h-3" />
             <span>Germany, Berlin</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600">

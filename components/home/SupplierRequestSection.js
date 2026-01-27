@@ -3,24 +3,24 @@ export default function SupplierRequestSection() {
     <div className="py-8">
       <div className="max-w-7xl mx-auto px-6">
         <div className="relative rounded-lg overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-400"></div>
-          <div className="absolute inset-0 bg-[url('/images/warehouse.jpg')] bg-cover bg-center opacity-20"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-blue-400/80"></div>
+          <div className="absolute inset-0 bg-[url('/Image/others/image102.png')] bg-cover bg-center opacity-30"></div>
 
           <div className="relative z-10">
             <div className="grid grid-cols-12">
               {/* Left Side - Info */}
               <div className="col-span-7 p-12 text-white">
-                <h2 className="text-3xl font-bold mb-4">
+                <h2 className="text-4xl font-bold mb-4">
                   An easy way to send<br />requests to all suppliers
                 </h2>
-                <p className="text-blue-100 mb-6 max-w-xl">
+                <p className="text-blue-100/90 mb-6 max-w-xl">
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.
                 </p>
               </div>
 
               {/* Right Side - Form Card */}
-              <div className="col-span-5 p-12 flex items-center">
-                <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
+              <div className="col-span-5 p-12 flex items-center justify-end">
+                <div className="w-full max-w-sm bg-white rounded-lg shadow-xl ring-1 ring-gray-100 p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">Send quote to suppliers</h3>
                   <div className="space-y-3">
                     <div>
@@ -28,7 +28,7 @@ export default function SupplierRequestSection() {
                       <input
                         type="text"
                         placeholder="What item you need?"
-                        className="w-full px-3 py-2 rounded-md border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        className="w-full px-3 py-2 rounded-md border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-200"
                       />
                     </div>
 

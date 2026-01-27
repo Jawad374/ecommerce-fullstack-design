@@ -35,24 +35,23 @@ export default function HeroSection() {
 
           {/* Main Hero Banner */}
           <div className="col-span-7 flex">
-            <div className="bg-linear-to-br from-teal-200 to-teal-300 rounded-lg p-12 relative overflow-hidden min-h-[380px] flex items-center h-full w-full">
-              <div className="relative z-10">
-                <h1 className="text-4xl font-bold text-gray-800 mb-4">
+            <div
+              className="rounded-lg p-12 relative overflow-hidden min-h-[380px] flex items-center h-full w-full"
+              style={{
+                backgroundImage: `url('/Image/others/Banner-board-800x420.png')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-600/10 via-transparent to-transparent"></div>
+              <div className="relative z-10 max-w-xl">
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
                   Latest trending<br />
                   <span className="text-5xl">Electronic items</span>
                 </h1>
                 <button className="mt-4 px-6 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-100 font-medium">
                   Learn more
                 </button>
-              </div>
-              
-              {/* Decorative Elements */}
-              <div className="absolute right-0 top-0 bottom-0 w-1/2">
-                <div className="relative w-full h-full">
-                  {/* Placeholder for laptop/electronics image */}
-                  <div className="absolute right-4 top-8 w-64 h-48 bg-gray-200 rounded-lg opacity-50"></div>
-                  <div className="absolute right-16 bottom-8 w-48 h-32 bg-gray-300 rounded-lg opacity-40"></div>
-                </div>
               </div>
             </div>
           </div>

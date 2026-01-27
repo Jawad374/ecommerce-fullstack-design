@@ -1,36 +1,44 @@
 export default function RecommendedSection() {
   const products = [
-    { name: 'T-shirts with multiple colors, for men', price: '$10.30', image: '👕' },
-    { name: 'Jeans shorts for men blue color', price: '$10.30', image: '🧥' },
-    { name: 'Brown winter coat medium size', price: '$12.50', image: '🧥' },
-    { name: 'Jeans bag for travel for men', price: '$34.00', image: '💼' },
-    { name: 'Leather wallet', price: '$99.00', image: '🎒' },
-    { name: 'Canon camera black, 100x zoom', price: '$9.99', image: '📷' },
-    { name: 'Headset for gaming with mic', price: '$8.99', image: '🎧' },
-    { name: 'Smartwatch silver color modern', price: '$10.30', image: '⌚' },
-    { name: 'Blue wallet for men leather material', price: '$10.30', image: '🎒' },
-    { name: 'Jeans bag for travel for men', price: '$80.95', image: '☕' },
+    { name: 'T-shirts with multiple colors, for men', price: '$10.30', image: '/Image/cloth/1.jpg' },
+    { name: 'Jeans shorts for men blue color', price: '$10.30', image: '/Image/cloth/2.jpg' },
+    { name: 'Brown winter coat medium size', price: '$12.50', image: '/Image/cloth/3.jpg' },
+    { name: 'Jeans bag for travel for men', price: '$34.00', image: '/Image/cloth/5.jpg' },
+    { name: 'Leather wallet', price: '$9.00', image: '/Image/cloth/6.jpg' },
+    { name: 'Canon camera black, 100x zoom', price: '$999.99', image: '/Image/tech/6.jpg' },
+    { name: 'Headset for gaming with mic', price: '$80.99', image: '/Image/tech/5.jpg' },
+    { name: 'Smartwatch silver color modern', price: '$10.30', image: '/Image/tech/8.jpg' },
+    { name: 'SmartPhone From Apple', price: '$999.30', image: '/Image/tech/1.jpg' },
+    { name: 'Laptop for office work ', price: '$500.95', image: '/Image/tech/7.jpg' },
   ];
 
   const services = [
     {
       title: 'Source from Industry Hubs',
-      image: '📦',
+      image: '/Image/others/step1.png',
+      icon: '🔎',
+      iconImage: '/icons/1.png',
       color: 'from-amber-100 to-amber-50'
     },
     {
       title: 'Customize Your Products',
-      image: '🎨',
+      image: '/Image/others/step2.png',
+      icon: '🎨',
+      iconImage: '/icons/2.png',
       color: 'from-blue-100 to-blue-50'
     },
     {
       title: 'Fast, reliable shipping by ocean or air',
-      image: '✈️',
+      image: '/Image/others/step3.png',
+      icon: '✈️',
+      iconImage: '/icons/3.png',
       color: 'from-teal-100 to-teal-50'
     },
     {
       title: 'Product monitoring and inspection',
-      image: '🔍',
+      image: '/Image/others/step4.png',
+      icon: '🔍',
+      iconImage: '/icons/4.png',
       color: 'from-purple-100 to-purple-50'
     }
   ];
@@ -58,7 +66,9 @@ export default function RecommendedSection() {
             {products.map((product, index) => (
               <div key={index} className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-100">
                 <div className="relative bg-gray-50">
-                  <div className="aspect-square flex items-center justify-center text-6xl">{product.image}</div>
+                  <div className="aspect-square flex items-center justify-center">
+                    <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" style={{ filter: 'none', opacity: 1 }} />
+                  </div>
                   <div className="absolute top-3 left-3 bg-white text-sm text-gray-800 px-2 py-1 rounded shadow-sm">{product.price}</div>
                 </div>
                 <div className="p-4">
@@ -72,19 +82,36 @@ export default function RecommendedSection() {
         {/* Our Extra Services */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Our extra services</h2>
-          <div className="grid grid-cols-4 gap-4">
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
             {services.map((service, index) => (
-              <div key={index} className={`relative rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-48 bg-gradient-to-br ${service.color}`}>
-                <div className="absolute inset-0 bg-[url('/images/service-${index}.jpg')] bg-cover bg-center opacity-20"></div>
-                <div className="relative z-10 p-6 h-full flex flex-col">
-                  <h3 className="text-base font-semibold text-gray-800 mb-2">{service.title}</h3>
-                  <div className="flex-1" />
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl text-gray-600">{service.image}</div>
-                    <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow">
-                      <span className="text-lg">→</span>
-                    </button>
+              <div
+                key={index}
+                className="group relative cursor-pointer overflow-visible rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+              >
+                {/* Top image area */}
+                <div className="relative h-32 w-full">
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    className="h-full w-full rounded-t-lg object-cover"
+                  />
+
+                  {/* Floating Icon - Centered on the boundary */}
+                  <div className="absolute -bottom-6 right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border-[3px] border-white bg-blue-100">
+                    <img
+                      src={service.iconImage}
+                      alt="icon"
+                      className="h-5 w-5 object-contain opacity-80"
+                    />
                   </div>
+                </div>
+
+                {/* Bottom content */}
+                <div className="p-4 pt-8">
+                  <h3 className="text-base font-semibold leading-snug text-gray-900">
+                    {service.title}
+                  </h3>
                 </div>
               </div>
             ))}
@@ -98,7 +125,7 @@ export default function RecommendedSection() {
             {regions.map((region, index) => (
                 <div key={index} className="flex items-center gap-3 min-w-[160px]">
                   <img
-                    src={`https://flagcdn.com/w20/${region.code}.png`}
+                    src={`/Image/flags/Property 1=${region.code.toUpperCase()}.png`}
                     alt={`${region.name} flag`}
                     width={20}
                     height={14}

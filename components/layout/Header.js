@@ -8,9 +8,12 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center">
           {/* Left: Logo */}
           <div className="flex items-center flex-none">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-blue-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">□</span>
+            <Link href="/" className="flex items-center gap-4">
+              <div className="relative w-9 h-9">
+                <div className="absolute -left-1 -top-1 w-9 h-9 rounded-lg bg-blue-100" />
+                <div className="relative w-9 h-9 rounded-lg bg-blue-500 flex items-center justify-center">
+                  <img src="/Image/others/logoicon.png" alt="Brand logo" className="w-6 h-6" />
+                </div>
               </div>
               <span className="text-blue-500 font-bold text-xl">Brand</span>
             </Link>
@@ -93,7 +96,7 @@ export default function Header() {
 
           <div className="ml-auto flex items-center gap-4 text-gray-700">
             <button className="flex items-center gap-2">English, USD</button>
-            <button className="flex items-center gap-2">Ship to <img src="https://flagcdn.com/w20/de.png" alt="DE" className="w-5 h-3" /></button>
+            <button className="flex items-center gap-2">Ship to <img src="/Image/flags/Property 1=DE.png" alt="DE" className="w-5 h-3" /></button>
           </div>
         </div>
       </nav>
