@@ -17,10 +17,10 @@ export default function HeroSection() {
   return (
     <div className="bg-gray-50 py-6">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-12 gap-6">
+        <div className="grid grid-cols-12 gap-6 items-stretch">
           {/* Sidebar Categories */}
-          <div className="col-span-2">
-            <div className="bg-white rounded-lg overflow-hidden">
+          <div className="col-span-2 flex">
+            <div className="bg-white rounded-lg overflow-hidden h-full">
               {categories.map((category, index) => (
                 <Link
                   key={index}
@@ -34,8 +34,8 @@ export default function HeroSection() {
           </div>
 
           {/* Main Hero Banner */}
-          <div className="col-span-7">
-            <div className="bg-gradient-to-br from-teal-200 to-teal-300 rounded-lg p-12 relative overflow-hidden min-h-[380px] flex items-center border-4 border-orange-400">
+          <div className="col-span-7 flex">
+            <div className="bg-linear-to-br from-teal-200 to-teal-300 rounded-lg p-12 relative overflow-hidden min-h-[380px] flex items-center h-full w-full">
               <div className="relative z-10">
                 <h1 className="text-4xl font-bold text-gray-800 mb-4">
                   Latest trending<br />
@@ -58,7 +58,7 @@ export default function HeroSection() {
           </div>
 
           {/* Right Sidebar */}
-          <div className="col-span-3 flex flex-col gap-4">
+          <div className="col-span-3 flex flex-col gap-4 h-full">
             {/* User Account Card */}
             <div className="bg-blue-100 rounded-lg p-6 flex-1 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-4">

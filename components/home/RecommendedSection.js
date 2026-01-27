@@ -36,16 +36,16 @@ export default function RecommendedSection() {
   ];
 
   const regions = [
-    { name: 'Arabic Emirates', flag: '🇦🇪', sellers: 'shopname.ae' },
-    { name: 'Australia', flag: '🇦🇺', sellers: 'shopname.au' },
-    { name: 'United States', flag: '🇺🇸', sellers: 'shopname.us' },
-    { name: 'Russia', flag: '🇷🇺', sellers: 'shopname.ru' },
-    { name: 'Italy', flag: '🇮🇹', sellers: 'shopname.it' },
-    { name: 'Denmark', flag: '🇩🇰', sellers: 'shopname.dk' },
-    { name: 'France', flag: '🇫🇷', sellers: 'shopname.fr' },
-    { name: 'Arabic Emirates', flag: '🇦🇪', sellers: 'shopname.ae' },
-    { name: 'China', flag: '🇨🇳', sellers: 'shopname.cn' },
-    { name: 'Great Britain', flag: '🇬🇧', sellers: 'shopname.co.uk' },
+     { name: 'Arabic Emirates', code: 'ae', sellers: 'shopname.ae' },
+     { name: 'Australia', code: 'au', sellers: 'shopname.au' },
+     { name: 'United States', code: 'us', sellers: 'shopname.us' },
+     { name: 'Russia', code: 'ru', sellers: 'shopname.ru' },
+     { name: 'Italy', code: 'it', sellers: 'shopname.it' },
+     { name: 'Denmark', code: 'dk', sellers: 'shopname.dk' },
+     { name: 'France', code: 'fr', sellers: 'shopname.fr' },
+     { name: 'Arabic Emirates', code: 'ae', sellers: 'shopname.ae' },
+     { name: 'China', code: 'cn', sellers: 'shopname.cn' },
+     { name: 'Great Britain', code: 'gb', sellers: 'shopname.co.uk' },
   ];
 
   return (
@@ -54,15 +54,15 @@ export default function RecommendedSection() {
         {/* Recommended Items */}
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Recommended items</h2>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-5 gap-6">
             {products.map((product, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="aspect-square bg-gray-100 flex items-center justify-center text-6xl">
-                  {product.image}
+              <div key={index} className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-100">
+                <div className="relative bg-gray-50">
+                  <div className="aspect-square flex items-center justify-center text-6xl">{product.image}</div>
+                  <div className="absolute top-3 left-3 bg-white text-sm text-gray-800 px-2 py-1 rounded shadow-sm">{product.price}</div>
                 </div>
                 <div className="p-4">
-                  <p className="text-lg font-bold text-gray-800 mb-1">{product.price}</p>
-                  <p className="text-sm text-gray-600 line-clamp-2">{product.name}</p>
+                  <p className="text-sm text-gray-700 mb-1 line-clamp-2">{product.name}</p>
                 </div>
               </div>
             ))}
@@ -74,16 +74,18 @@ export default function RecommendedSection() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Our extra services</h2>
           <div className="grid grid-cols-4 gap-4">
             {services.map((service, index) => (
-              <div key={index} className={`bg-gradient-to-br ${service.color} rounded-lg p-6 relative overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-48`}>
-                <h3 className="text-base font-semibold text-gray-800 mb-4 relative z-10">
-                  {service.title}
-                </h3>
-                <div className="absolute bottom-4 right-4 text-6xl opacity-50">
-                  {service.image}
+              <div key={index} className={`relative rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer h-48 bg-gradient-to-br ${service.color}`}>
+                <div className="absolute inset-0 bg-[url('/images/service-${index}.jpg')] bg-cover bg-center opacity-20"></div>
+                <div className="relative z-10 p-6 h-full flex flex-col">
+                  <h3 className="text-base font-semibold text-gray-800 mb-2">{service.title}</h3>
+                  <div className="flex-1" />
+                  <div className="flex items-center justify-between">
+                    <div className="text-2xl text-gray-600">{service.image}</div>
+                    <button className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow">
+                      <span className="text-lg">→</span>
+                    </button>
+                  </div>
                 </div>
-                <button className="absolute top-4 right-4 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100">
-                  <span className="text-xl">→</span>
-                </button>
               </div>
             ))}
           </div>
@@ -92,15 +94,21 @@ export default function RecommendedSection() {
         {/* Suppliers by Region */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Suppliers by region</h2>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
             {regions.map((region, index) => (
-              <div key={index} className="bg-white rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer">
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="text-3xl">{region.flag}</span>
-                  <span className="font-medium text-gray-800">{region.name}</span>
+                <div key={index} className="flex items-center gap-3 min-w-[160px]">
+                  <img
+                    src={`https://flagcdn.com/w20/${region.code}.png`}
+                    alt={`${region.name} flag`}
+                    width={20}
+                    height={14}
+                    className="shrink-0 rounded-sm"
+                  />
+                  <div>
+                    <div className="font-medium text-gray-800">{region.name}</div>
+                    <div className="text-sm text-gray-500">{region.sellers}</div>
+                  </div>
                 </div>
-                <p className="text-sm text-gray-500 underline">{region.sellers}</p>
-              </div>
             ))}
           </div>
         </div>
