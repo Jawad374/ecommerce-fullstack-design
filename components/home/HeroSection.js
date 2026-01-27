@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -15,17 +16,23 @@ export default function HeroSection() {
   ];
 
   return (
-    <div className="bg-gray-50 py-6">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-12 gap-6 items-stretch">
-          {/* Sidebar Categories */}
-          <div className="col-span-2 flex">
-            <div className="bg-white rounded-lg overflow-hidden h-full">
+    <div className="bg-gray-50 py-4 md:py-6">
+      <div className="max-w-7xl mx-auto px-0 md:px-6">
+        {/* Main Hero Container: 12-column grid system */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 md:gap-5 items-stretch bg-white border-y md:border border-gray-200 md:rounded-lg md:p-4">
+          
+          {/* Sidebar Categories (Desktop Only) */}
+          <div className="hidden md:flex md:col-span-3 lg:col-span-2 flex-col">
+            <div className="overflow-hidden w-full h-full">
               {categories.map((category, index) => (
                 <Link
                   key={index}
                   href={`/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="block px-4 py-3 hover:bg-blue-50 text-gray-700 hover:text-blue-500 border-b last:border-b-0"
+                  className={`block px-4 py-2.5 text-sm transition-colors ${
+                    index === 0 
+                    ? 'bg-[#E5F1FF] font-semibold text-gray-900 rounded-md' 
+                    : 'text-gray-600 hover:bg-gray-100'
+                  }`}
                 >
                   {category}
                 </Link>
@@ -34,59 +41,73 @@ export default function HeroSection() {
           </div>
 
           {/* Main Hero Banner */}
-          <div className="col-span-7 flex">
+          <div className="col-span-1 md:col-span-6 lg:col-span-7 h-full">
             <div
-              className="rounded-lg p-12 relative overflow-hidden min-h-[380px] flex items-center h-full w-full"
+              className="relative overflow-hidden min-h-[220px] md:min-h-[380px] flex items-center h-full w-full p-6 md:p-12"
               style={{
                 backgroundImage: `url('/Image/others/Banner-board-800x420.png')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-600/10 via-transparent to-transparent"></div>
-              <div className="relative z-10 max-w-xl">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                  Latest trending<br />
-                  <span className="text-5xl">Electronic items</span>
+              {/* Content overlay */}
+              <div className="relative z-10 max-w-[280px] md:max-w-md">
+                <h2 className="text-lg md:text-3xl text-gray-800 font-normal leading-tight">
+                  Latest trending
+                </h2>
+                <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
+                  Electronic items
                 </h1>
-                <button className="mt-4 px-6 py-2 bg-white text-gray-800 rounded-md hover:bg-gray-100 font-medium">
+                <button className="px-4 py-2 md:px-6 md:py-2.5 bg-white text-blue-600 rounded-lg font-medium shadow-sm hover:bg-gray-50 transition-colors">
                   Learn more
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Right Sidebar */}
-          <div className="col-span-3 flex flex-col gap-4 h-full">
+          {/* Right Sidebars (Desktop Only) */}
+          <div className="hidden md:flex md:col-span-3 flex-col gap-3">
             {/* User Account Card */}
-            <div className="bg-blue-100 rounded-lg p-6 flex-1 flex flex-col justify-center">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-                <div>
-                  <p className="text-sm text-gray-600">Hi, user</p>
-                  <p className="text-sm text-gray-600">let's get started</p>
+            <div className="bg-[#E3F0FF] rounded-lg p-4 flex flex-col gap-3 flex-1">
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 bg-gray-200 rounded-full flex-shrink-0 relative overflow-hidden">
+                   {/* Avatar Placeholder */}
+                   <div className="absolute inset-0 bg-blue-200 opacity-50 flex items-center justify-center">
+                      <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
+                   </div>
+                </div>
+                <div className="leading-tight">
+                  <p className="text-sm text-gray-800">Hi, user</p>
+                  <p className="text-sm text-gray-800 font-normal">let's get started</p>
                 </div>
               </div>
-              <button className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-2">
-                Join now
-              </button>
-              <button className="w-full py-2 bg-white text-blue-500 rounded-md hover:bg-gray-50">
-                Log in
-              </button>
+              <div className="flex flex-col gap-2">
+                <button className="w-full py-2 bg-[#0D6EFD] text-white rounded-md text-sm font-medium hover:bg-blue-700">
+                  Join now
+                </button>
+                <button className="w-full py-2 bg-white text-[#0D6EFD] border border-gray-100 rounded-md text-sm font-medium hover:bg-gray-50">
+                  Log in
+                </button>
+              </div>
             </div>
 
-            {/* Promo Card */}
-            <div className="bg-orange-500 rounded-lg p-6 text-white flex-1 flex flex-col justify-center">
-              <p className="text-sm mb-1">Get US $10 off</p>
-              <p className="text-xs">with a new supplier</p>
+            {/* Promo Card: Discount */}
+            <div className="bg-[#F38332] rounded-lg p-4 text-white min-h-[90px] flex flex-col justify-center">
+              <p className="text-sm leading-tight max-w-[130px]">
+                Get US $10 off with a new supplier
+              </p>
             </div>
 
-            {/* Promo Card 2 */}
-            <div className="bg-teal-500 rounded-lg p-6 text-white flex-1 flex flex-col justify-center">
-              <p className="text-sm mb-1">Send quotes with</p>
-              <p className="text-xs">supplier preferences</p>
+            {/* Promo Card: Inquiry */}
+            <div className="bg-[#55BDC3] rounded-lg p-4 text-white min-h-[90px] flex flex-col justify-center">
+              <p className="text-sm leading-tight max-w-[140px]">
+                Send quotes with supplier preferences
+              </p>
             </div>
           </div>
+
         </div>
       </div>
     </div>

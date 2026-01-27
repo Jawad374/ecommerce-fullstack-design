@@ -1,3 +1,6 @@
+'use client';
+import Link from 'next/link';
+
 export default function RecommendedSection() {
   const products = [
     { name: 'T-shirts with multiple colors, for men', price: '$10.30', image: '/Image/cloth/1.jpg' },
@@ -13,34 +16,10 @@ export default function RecommendedSection() {
   ];
 
   const services = [
-    {
-      title: 'Source from Industry Hubs',
-      image: '/Image/others/step1.png',
-      icon: '🔎',
-      iconImage: '/icons/1.png',
-      color: 'from-amber-100 to-amber-50'
-    },
-    {
-      title: 'Customize Your Products',
-      image: '/Image/others/step2.png',
-      icon: '🎨',
-      iconImage: '/icons/2.png',
-      color: 'from-blue-100 to-blue-50'
-    },
-    {
-      title: 'Fast, reliable shipping by ocean or air',
-      image: '/Image/others/step3.png',
-      icon: '✈️',
-      iconImage: '/icons/3.png',
-      color: 'from-teal-100 to-teal-50'
-    },
-    {
-      title: 'Product monitoring and inspection',
-      image: '/Image/others/step4.png',
-      icon: '🔍',
-      iconImage: '/icons/4.png',
-      color: 'from-purple-100 to-purple-50'
-    }
+    { title: 'Source from Industry Hubs', image: '/Image/others/step1.png', iconImage: '/icons/1.png' },
+    { title: 'Customize Your Products', image: '/Image/others/step2.png', iconImage: '/icons/2.png' },
+    { title: 'Fast, reliable shipping by ocean or air', image: '/Image/others/step3.png', iconImage: '/icons/3.png' },
+    { title: 'Product monitoring and inspection', image: '/Image/others/step4.png', iconImage: '/icons/4.png' }
   ];
 
   const regions = [
@@ -51,65 +30,49 @@ export default function RecommendedSection() {
      { name: 'Italy', code: 'it', sellers: 'shopname.it' },
      { name: 'Denmark', code: 'dk', sellers: 'shopname.dk' },
      { name: 'France', code: 'fr', sellers: 'shopname.fr' },
-     { name: 'Arabic Emirates', code: 'ae', sellers: 'shopname.ae' },
      { name: 'China', code: 'cn', sellers: 'shopname.cn' },
      { name: 'Great Britain', code: 'gb', sellers: 'shopname.co.uk' },
   ];
 
   return (
-    <div className="bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="bg-gray-50 py-8 md:py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        
         {/* Recommended Items */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Recommended items</h2>
-          <div className="grid grid-cols-5 gap-6">
+        <div className="mb-10 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">Recommended items</h2>
+          {/* Mobile: 2 columns | Desktop: 5 columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-6">
             {products.map((product, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow cursor-pointer border border-gray-100">
-                <div className="relative bg-gray-50">
+              <div key={index} className="bg-white rounded-lg overflow-hidden border border-gray-200 md:border-gray-100 hover:shadow-lg transition-shadow cursor-pointer">
+                <div className="relative bg-white p-2">
                   <div className="aspect-square flex items-center justify-center">
-                    <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" style={{ filter: 'none', opacity: 1 }} />
+                    <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" />
                   </div>
-                  <div className="absolute top-3 left-3 bg-white text-sm text-gray-800 px-2 py-1 rounded shadow-sm">{product.price}</div>
                 </div>
-                <div className="p-4">
-                  <p className="text-sm text-gray-700 mb-1 line-clamp-2">{product.name}</p>
+                <div className="p-3 md:p-4">
+                  <p className="text-sm font-bold text-gray-900 mb-1">{product.price}</p>
+                  <p className="text-xs md:text-sm text-gray-500 line-clamp-2 leading-relaxed">{product.name}</p>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Our Extra Services */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Our extra services</h2>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+        {/* Our Extra Services - Hidden on very small screens or kept as a tight grid */}
+        <div className="mb-10 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">Our extra services</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {services.map((service, index) => (
-              <div
-                key={index}
-                className="group relative cursor-pointer overflow-visible rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
-              >
-                {/* Top image area */}
-                <div className="relative h-32 w-full">
-                  <img
-                    src={service.image}
-                    alt={service.title}
-                    className="h-full w-full rounded-t-lg object-cover"
-                  />
-
-                  {/* Floating Icon - Centered on the boundary */}
-                  <div className="absolute -bottom-6 right-4 z-10 flex h-12 w-12 items-center justify-center rounded-full border-[3px] border-white bg-blue-100">
-                    <img
-                      src={service.iconImage}
-                      alt="icon"
-                      className="h-5 w-5 object-contain opacity-80"
-                    />
+              <div key={index} className="group relative rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
+                <div className="relative h-28 md:h-32 w-full">
+                  <img src={service.image} alt={service.title} className="h-full w-full object-cover" />
+                  <div className="absolute -bottom-5 right-4 z-10 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-full border-[3px] border-white bg-[#D1E7FF]">
+                    <img src={service.iconImage} alt="icon" className="h-5 w-5 object-contain" />
                   </div>
                 </div>
-
-                {/* Bottom content */}
-                <div className="p-4 pt-8">
-                  <h3 className="text-base font-semibold leading-snug text-gray-900">
+                <div className="p-4 pt-6">
+                  <h3 className="text-sm md:text-base font-medium text-gray-900 pr-8 leading-tight">
                     {service.title}
                   </h3>
                 </div>
@@ -118,18 +81,16 @@ export default function RecommendedSection() {
           </div>
         </div>
 
-        {/* Suppliers by Region */}
-        <div className="mb-8">
+        {/* Suppliers by Region - Hidden on Mobile to save space */}
+        <div className="hidden md:block mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Suppliers by region</h2>
           <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
             {regions.map((region, index) => (
                 <div key={index} className="flex items-center gap-3 min-w-[160px]">
                   <img
                     src={`/Image/flags/Property 1=${region.code.toUpperCase()}.png`}
-                    alt={`${region.name} flag`}
-                    width={20}
-                    height={14}
-                    className="shrink-0 rounded-sm"
+                    alt={region.name}
+                    className="w-5 h-3.5 shrink-0 rounded-sm"
                   />
                   <div>
                     <div className="font-medium text-gray-800">{region.name}</div>
