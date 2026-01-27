@@ -9,7 +9,7 @@ export default function FilterSidebar() {
   const features = ['Metallic', 'Plastic cover', '8GB Ram', 'Super power', 'Large Memory'];
 
   return (
-    <div className="w-[240px] bg-white p-4 font-sans text-gray-700">
+    <div className="w-60 bg-white p-4 font-sans text-gray-700">
       
       {/* Category Section */}
       <section className="mb-5">
@@ -34,7 +34,7 @@ export default function FilterSidebar() {
         <div className="space-y-3">
           {brands.map(brand => (
             <label key={brand} className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="w-[18px] h-[18px] rounded border-gray-300 text-blue-600 focus:ring-0" />
+              <input type="checkbox" className="w-4.5 h-4.5 rounded border-gray-300 text-blue-600 focus:ring-0" />
               <span className="text-[15px]">{brand}</span>
             </label>
           ))}
@@ -53,7 +53,7 @@ export default function FilterSidebar() {
         <div className="space-y-3">
           {features.map(feat => (
             <label key={feat} className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="w-[18px] h-[18px] rounded border-gray-300 text-blue-600 focus:ring-0" />
+              <input type="checkbox" className="w-4.5 h-4.5 rounded border-gray-300 text-blue-600 focus:ring-0" />
               <span className="text-[15px]">{feat}</span>
             </label>
           ))}
@@ -101,7 +101,7 @@ export default function FilterSidebar() {
         <div className="space-y-3">
           {['Any', 'Refurbished', 'Brand new', 'Old items'].map((label, i) => (
             <label key={label} className="flex items-center gap-3 cursor-pointer">
-              <input type="radio" name="cond" defaultChecked={i === 0} className="w-[18px] h-[18px] border-gray-300 text-blue-600 focus:ring-0" />
+              <input type="radio" name="cond" defaultChecked={i === 0} className="w-4.5 h-4.5 border-gray-300 text-blue-600 focus:ring-0" />
               <span className="text-[15px]">{label}</span>
             </label>
           ))}
@@ -119,7 +119,7 @@ export default function FilterSidebar() {
         <div className="space-y-3">
           {[5, 4, 3, 2].map(num => (
             <label key={num} className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="w-[18px] h-[18px] rounded border-gray-300 text-blue-600 focus:ring-0" />
+              <input type="checkbox" className="w-4.5 h-4.5 rounded border-gray-300 text-blue-600 focus:ring-0" />
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
                   <span key={i} className={i < num ? "text-orange-400 text-lg" : "text-gray-300 text-lg"}>★</span>
