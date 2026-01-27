@@ -6,7 +6,7 @@ export default function SupplierRequestSection() {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="relative rounded-lg overflow-hidden">
           {/* Background Layers */}
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/90 to-blue-400/80"></div>
+          <div className="absolute inset-0 bg-linear-to-r from-blue-600/90 to-blue-400/80"></div>
           <div className="absolute inset-0 bg-[url('/Image/others/image102.png')] bg-cover bg-center opacity-30"></div>
 
           <div className="relative z-10">
@@ -69,7 +69,7 @@ export default function SupplierRequestSection() {
 
             {/* Mobile View: Simple Banner (Matches image_3e291b.png) */}
             <div className="md:hidden p-8 text-white">
-              <h2 className="text-2xl font-semibold mb-6 leading-tight max-w-[250px]">
+              <h2 className="text-2xl font-semibold mb-6 leading-tight max-w-62.5">
                 An easy way to send requests to all suppliers
               </h2>
               <button className="px-6 py-2.5 bg-blue-500 text-white rounded-xl font-medium text-sm shadow-lg border border-blue-400 active:bg-blue-600 transition-colors">

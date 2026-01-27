@@ -47,7 +47,7 @@ export default function Header() {
 
           {/* Desktop Search Bar */}
           <div className="hidden md:flex flex-1 mx-12">
-            <div className="flex w-full items-stretch border-2 border-[#0D6EFD] rounded-lg overflow-hidden h-[40px]">
+            <div className="flex w-full items-stretch border-2 border-[#0D6EFD] rounded-lg overflow-hidden h-10">
               <input 
                 type="text" 
                 placeholder="Search" 

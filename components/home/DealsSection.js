@@ -13,11 +13,11 @@ export default function DealsSection() {
     <div className="bg-gray-100 py-3 md:pt-4">
       <div className="max-w-7xl mx-auto px-0 md:px-4">
         {/* Container: Flex-col on mobile, flex-row (h-[240px]) on desktop */}
-        <div className="bg-white md:rounded-md border-y md:border border-gray-200 overflow-hidden flex flex-col md:flex-row md:h-[240px]">
+        <div className="bg-white md:rounded-md border-y md:border border-gray-200 overflow-hidden flex flex-col md:flex-row md:h-60">
           
           {/* --- HEADER SECTION --- */}
           {/* Desktop Sidebar: Fixed 240px | Mobile: Full width with border-b */}
-          <div className="w-full md:w-[240px] flex-shrink-0 border-b md:border-b-0 md:border-r border-gray-200 p-4 md:p-5 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start">
+          <div className="w-full md:w-60 shrink-0 border-b md:border-b-0 md:border-r border-gray-200 p-4 md:p-5 flex flex-row md:flex-col items-center md:items-start justify-between md:justify-start">
             <div>
               <h3 className="text-lg md:text-xl font-bold text-gray-900 leading-tight">Deals and offers</h3>
               <p className="text-xs md:text-sm text-gray-400 font-normal">Electronic equipments</p>
@@ -44,7 +44,7 @@ export default function DealsSection() {
             {deals.map((deal, idx) => (
               <div 
                 key={idx} 
-                className="min-w-[140px] md:min-w-0 md:flex-1 p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer text-center"
+                className="min-w-35 md:min-w-0 md:flex-1 p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer text-center"
               >
                 <div className="h-24 md:h-28 w-full flex items-center justify-center mb-3">
                   <img 

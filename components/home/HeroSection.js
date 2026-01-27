@@ -43,7 +43,7 @@ export default function HeroSection() {
           {/* Main Hero Banner */}
           <div className="col-span-1 md:col-span-6 lg:col-span-7 h-full">
             <div
-              className="relative overflow-hidden min-h-[220px] md:min-h-[380px] flex items-center h-full w-full p-6 md:p-12"
+              className="relative overflow-hidden min-h-55 md:min-h-95 flex items-center h-full w-full p-6 md:p-12"
               style={{
                 backgroundImage: `url('/Image/others/Banner-board-800x420.png')`,
                 backgroundSize: 'cover',
@@ -51,7 +51,7 @@ export default function HeroSection() {
               }}
             >
               {/* Content overlay */}
-              <div className="relative z-10 max-w-[280px] md:max-w-md">
+              <div className="relative z-10 max-w-70 md:max-w-md">
                 <h2 className="text-lg md:text-3xl text-gray-800 font-normal leading-tight">
                   Latest trending
                 </h2>
@@ -70,7 +70,7 @@ export default function HeroSection() {
             {/* User Account Card */}
             <div className="bg-[#E3F0FF] rounded-lg p-4 flex flex-col gap-3 flex-1">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 bg-gray-200 rounded-full flex-shrink-0 relative overflow-hidden">
+                <div className="w-11 h-11 bg-gray-200 rounded-full shrink-0 relative overflow-hidden">
                    {/* Avatar Placeholder */}
                    <div className="absolute inset-0 bg-blue-200 opacity-50 flex items-center justify-center">
                       <svg className="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -94,15 +94,15 @@ export default function HeroSection() {
             </div>
 
             {/* Promo Card: Discount */}
-            <div className="bg-[#F38332] rounded-lg p-4 text-white min-h-[90px] flex flex-col justify-center">
-              <p className="text-sm leading-tight max-w-[130px]">
+            <div className="bg-[#F38332] rounded-lg p-4 text-white min-h-22.5 flex flex-col justify-center">
+              <p className="text-sm leading-tight max-w-32.5">
                 Get US $10 off with a new supplier
               </p>
             </div>
 
             {/* Promo Card: Inquiry */}
-            <div className="bg-[#55BDC3] rounded-lg p-4 text-white min-h-[90px] flex flex-col justify-center">
-              <p className="text-sm leading-tight max-w-[140px]">
+            <div className="bg-[#55BDC3] rounded-lg p-4 text-white min-h-22.5 flex flex-col justify-center">
+              <p className="text-sm leading-tight max-w-35">
                 Send quotes with supplier preferences
               </p>
             </div>

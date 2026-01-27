@@ -86,7 +86,7 @@ export default function RecommendedSection() {
           <h2 className="text-2xl font-bold text-gray-800 mb-6">Suppliers by region</h2>
           <div className="flex flex-wrap items-center gap-x-12 gap-y-4">
             {regions.map((region, index) => (
-                <div key={index} className="flex items-center gap-3 min-w-[160px]">
+                <div key={index} className="flex items-center gap-3 min-w-40">
                   <img
                     src={`/Image/flags/Property 1=${region.code.toUpperCase()}.png`}
                     alt={region.name}

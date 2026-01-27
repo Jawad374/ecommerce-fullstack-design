@@ -33,14 +33,14 @@ export default function CategorySections() {
       <div className="flex flex-col md:flex-row">
         {/* Promo Banner (Hidden on Mobile) */}
         <div
-          className="hidden md:block w-[240px] flex-shrink-0 relative overflow-hidden"
+          className="hidden md:block w-60 shrink-0 relative overflow-hidden"
           style={{
             backgroundImage: `url(${bannerBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div className={`absolute inset-0 bg-gradient-to-br ${bannerGradient}`}></div>
+          <div className={`absolute inset-0 bg-linear-to-br ${bannerGradient}`}></div>
           <div className="relative p-5 h-full flex flex-col">
             <h3 className="text-xl font-semibold text-gray-800 leading-tight">
               {title.split(' ').map((word, i) => (
@@ -58,7 +58,7 @@ export default function CategorySections() {
           {items.map((item, index) => (
             <div
               key={index}
-              className={`p-3 md:p-3 flex flex-col md:flex-row items-center md:justify-between bg-white min-w-[140px] md:min-w-0
+              className={`p-3 md:p-3 flex flex-col md:flex-row items-center md:justify-between bg-white min-w-35 md:min-w-0
                 ${index % 4 !== 0 ? 'md:border-l md:border-gray-200' : ''}
                 ${index >= 4 ? 'md:border-t md:border-gray-200' : ''}`}
             >
@@ -69,7 +69,7 @@ export default function CategorySections() {
               </div>
 
               {/* Product Image */}
-              <div className="order-1 md:order-2 w-20 h-20 md:w-20 md:h-20 flex items-center justify-center flex-shrink-0">
+              <div className="order-1 md:order-2 w-20 h-20 md:w-20 md:h-20 flex items-center justify-center shrink-0">
                 <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain mix-blend-multiply" />
               </div>
             </div>
