@@ -40,13 +40,19 @@ export default function ProductDetailPage() {
           {/* Right - Supplier Card & You May Like */}
           <div className="col-span-3 space-y-6">
             <SupplierCard />
-            <YouMayLike />
           </div>
         </div>
 
-        {/* Product Tabs */}
-        <div className="mb-8">
-          <ProductTabs />
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Left Column: Product Tabs */}
+          <div className="flex-3 w-full">
+            <ProductTabs />
+          </div>
+
+          {/* Right Column: Sidebar */}
+          <div className="flex-1 w-full lg:max-w-70">
+            <YouMayLike />
+          </div>
         </div>
 
         {/* Related Products */}

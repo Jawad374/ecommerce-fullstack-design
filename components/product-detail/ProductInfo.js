@@ -1,91 +1,83 @@
+import React from 'react';
+
 export default function ProductInfo() {
   return (
-    <div className="space-y-4">
+    <div className="max-w-xl font-sans p-4 bg-white">
       {/* Stock Status */}
-      <div className="flex items-center gap-2 text-green-600">
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+      <div className="flex items-center gap-1.5 text-[#32b43a] mb-2">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
         </svg>
-        <span className="text-sm font-medium">in stock</span>
+        <span className="text-[15px] font-medium">In stock</span>
       </div>
 
       {/* Product Title */}
-      <h1 className="text-3xl font-bold text-gray-800">
+      <h1 className="text-[22px] leading-tight font-semibold text-[#1c1c1c] mb-3">
         Mens Long Sleeve T-shirt Cotton Base Layer Slim Muscle
       </h1>
 
-      {/* Rating and Reviews */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2">
-          <div className="flex text-yellow-400">
-            {[...Array(5)].map((_, i) => (
-              <span key={i} className={i < 4 ? 'text-yellow-400' : 'text-gray-300'}>★</span>
-            ))}
+      {/* Rating and Reviews Row */}
+      <div className="flex items-center text-[#8b96a5] text-sm mb-4">
+        <div className="flex items-center gap-1">
+          <div className="flex text-[#ff9017] text-lg">
+            {[...Array(4)].map((_, i) => <span key={i}>★</span>)}
+            <span className="text-[#dee2e7]">★</span>
           </div>
-          <span className="text-yellow-600 font-medium">9.3</span>
+          <span className="text-[#ff9017] font-medium ml-1">9.3</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        <span className="mx-2 text-[#dee2e7]">•</span>
+        <div className="flex items-center gap-1.5">
+          <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5H4a2 2 0 01-2-2V5z" />
           </svg>
-          <span className="text-sm">32 reviews</span>
+          <span>32 reviews</span>
         </div>
-        <div className="flex items-center gap-2 text-gray-600">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        <span className="mx-2 text-[#dee2e7]">•</span>
+        <div className="flex items-center gap-1.5">
+          <svg className="w-4 h-4 opacity-60" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <span className="text-sm">154 sold</span>
+          <span>154 sold</span>
         </div>
       </div>
 
-      {/* Pricing */}
-      <div className="flex items-end gap-4 py-4 border-y">
-        <div>
-          <div className="text-sm text-gray-500 mb-1">Price:</div>
-          <div className="text-3xl font-bold text-red-600">$98.00</div>
-          <div className="text-sm text-gray-400">50-100 pcs</div>
+      {/* Pricing Section - The "Peach" Box */}
+      <div className="bg-[#fff0df] p-4 flex gap-0 mb-6 border-l-0">
+        <div className="flex-1 border-r border-[#f7e1c1] pr-4">
+          <div className="text-[18px] font-bold text-[#fa3434]">$98.00</div>
+          <div className="text-[13px] text-[#8b96a5]">50-100 pcs</div>
         </div>
-        <div>
-          <div className="text-xl font-bold text-gray-800">$90.00</div>
-          <div className="text-sm text-gray-400">100-700 pcs</div>
+        <div className="flex-1 border-r border-[#f7e1c1] px-6">
+          <div className="text-[18px] font-bold text-[#1c1c1c]">$90.00</div>
+          <div className="text-[13px] text-[#8b96a5]">100-700 pcs</div>
         </div>
-        <div>
-          <div className="text-xl font-bold text-gray-800">$78.00</div>
-          <div className="text-sm text-gray-400">700+ pcs</div>
+        <div className="flex-1 pl-6">
+          <div className="text-[18px] font-bold text-[#1c1c1c]">$78.00</div>
+          <div className="text-[13px] text-[#8b96a5]">700+ pcs</div>
         </div>
       </div>
 
-      {/* Product Details */}
-      <div className="space-y-3 text-sm">
-        <div className="flex">
-          <span className="w-32 text-gray-500">Price:</span>
-          <span className="text-gray-800 font-medium">Negotiable</span>
-        </div>
-        <div className="flex">
-          <span className="w-32 text-gray-500">Type:</span>
-          <span className="text-gray-800">Classic shoes</span>
-        </div>
-        <div className="flex">
-          <span className="w-32 text-gray-500">Material:</span>
-          <span className="text-gray-800">Plastic material</span>
-        </div>
-        <div className="flex">
-          <span className="w-32 text-gray-500">Design:</span>
-          <span className="text-gray-800">Modern nice</span>
-        </div>
-        <div className="flex">
-          <span className="w-32 text-gray-500">Customization:</span>
-          <span className="text-gray-800">Customized logo and design custom packages</span>
-        </div>
-        <div className="flex">
-          <span className="w-32 text-gray-500">Protection:</span>
-          <span className="text-gray-800">Refund Policy</span>
-        </div>
-        <div className="flex">
-          <span className="w-32 text-gray-500">Warranty:</span>
-          <span className="text-gray-800">2 years full warranty</span>
-        </div>
+      {/* Product Details Table */}
+      <div className="space-y-4 text-[15px]">
+        <DetailRow label="Price:" value="Negotiable" />
+        <hr className="border-[#e0e0e0]" />
+        <DetailRow label="Type:" value="Classic shoes" />
+        <DetailRow label="Material:" value="Plastic material" />
+        <DetailRow label="Design:" value="Modern nice" />
+        <hr className="border-[#e0e0e0]" />
+        <DetailRow label="Customization:" value="Customized logo and design custom packages" />
+        <DetailRow label="Protection:" value="Refund Policy" />
+        <DetailRow label="Warranty:" value="2 years full warranty" />
       </div>
+    </div>
+  );
+}
+
+function DetailRow({ label, value }) {
+  return (
+    <div className="flex items-start">
+      <span className="w-32 text-[#8b96a5] shrink-0">{label}</span>
+      <span className="text-[#505050]">{value}</span>
     </div>
   );
 }
