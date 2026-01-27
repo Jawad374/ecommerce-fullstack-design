@@ -75,7 +75,7 @@ export default function ProductGallery() {
             }`}
           >
             {/* Image section */}
-            <div className={`flex items-center justify-center flex-shrink-0 ${
+            <div className={`flex items-center justify-center shrink-0 ${
               viewMode === 'list' ? 'w-48 h-48' : 'w-full h-48 mb-4'
             }`}>
               <img src={product.image} alt="Product" className="max-h-full object-contain" />
