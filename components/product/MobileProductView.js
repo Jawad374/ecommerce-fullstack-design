@@ -127,7 +127,7 @@ export default function MobileProductView() {
         <h2 className="px-4 text-lg font-bold mb-4">You may also like</h2>
         <div className="flex gap-4 overflow-x-auto px-4 no-scrollbar pb-4">
           {[1, 2, 3].map((item) => (
-            <div key={item} className="min-w-[140px] border border-gray-100 rounded-lg p-3">
+            <div key={item} className="min-w-35 border border-gray-100 rounded-lg p-3">
               <div className="w-full h-28 bg-gray-50 rounded mb-2 flex items-center justify-center text-2xl">🎒</div>
               <p className="font-bold text-gray-900 text-sm">$10.30</p>
               <p className="text-xs text-gray-500 line-clamp-2 mt-1">Solid Backpack blue jeans large size</p>
