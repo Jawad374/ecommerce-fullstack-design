@@ -1,26 +1,39 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductGallery() {
+  const { filteredProducts, filters, setFilters } = useCart();
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
-  const [activeFilters, setActiveFilters] = useState(['Samsung', 'Apple', 'Poco', 'Metallic', '4 star', '3 star']);
 
-  const products = [
-    { id: 1, name: 'GoPro HERO6 4K Action Camera - Black', price: 99.50, oldPrice: 1128.00, rating: 7.5, image: 'https://placehold.co/200x200?text=Product+1' },
-    { id: 2, name: 'GoPro HERO6 4K Action Camera - Black', price: 99.50, oldPrice: 1128.00, rating: 5.9, image: 'https://placehold.co/200x200?text=Product+2' },
-    { id: 3, name: 'GoPro HERO6 4K Action Camera - Black', price: 99.50, oldPrice: 1128.00, rating: 7.5, image: 'https://placehold.co/200x200?text=Product+3' },
-    { id: 4, name: 'GoPro HERO6 4K Action Camera - Black', price: 99.50, oldPrice: 1128.00, rating: 7.5, image: 'https://placehold.co/200x200?text=Product+4' },
-    { id: 5, name: 'GoPro HERO6 4K Action Camera - Black', price: 99.50, oldPrice: 1128.00, rating: 7.5, image: 'https://placehold.co/200x200?text=Product+5' },
-    { id: 6, name: 'GoPro HERO6 4K Action Camera - Black', price: 99.50, oldPrice: 1128.00, rating: 7.5, image: 'https://placehold.co/200x200?text=Product+6' },
-  ];
+  const activeTags = [...filters.brands, ...filters.categories];
+
+  const clearAllFilters = () => {
+    setFilters({
+      minPrice: 0,
+      maxPrice: 10000,
+      categories: [],
+      brands: [],
+      features: []
+    });
+  };
+
+  const removeTag = (tag) => {
+     if (filters.brands.includes(tag)) {
+        setFilters(prev => ({...prev, brands: prev.brands.filter(b => b !== tag)}));
+     } else if (filters.categories.includes(tag)) {
+        setFilters(prev => ({...prev, categories: prev.categories.filter(c => c !== tag)}));
+     }
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen font-sans">
       {/* --- Header Toolbar --- */}
       <div className="flex items-center justify-between bg-white border border-gray-200 rounded-lg p-3 mb-4 shadow-sm">
         <div className="flex items-center gap-6">
-          <span className="text-gray-800">12,911 items in <span className="font-bold">Mobile accessory</span></span>
+          <span className="text-gray-800">{filteredProducts.length} items found</span>
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-0" />
             <span className="text-sm text-gray-700">Verified only</span>
@@ -52,22 +65,24 @@ export default function ProductGallery() {
       </div>
 
       {/* --- Active Filter Tags --- */}
-      <div className="flex items-center gap-2 mb-6 flex-wrap">
-        {activeFilters.map(filter => (
-          <div key={filter} className="flex items-center gap-2 px-3 py-1 bg-white border border-blue-400 rounded-md text-sm text-gray-600">
-            {filter}
-            <button onClick={() => setActiveFilters(prev => prev.filter(f => f !== filter))} className="text-gray-400 hover:text-black">×</button>
-          </div>
-        ))}
-        <button onClick={() => setActiveFilters([])} className="text-sm text-blue-600 font-medium ml-2 hover:underline">Clear all filter</button>
-      </div>
+      {activeTags.length > 0 && (
+        <div className="flex items-center gap-2 mb-6 flex-wrap">
+          {activeTags.map(filter => (
+            <div key={filter} className="flex items-center gap-2 px-3 py-1 bg-white border border-blue-400 rounded-md text-sm text-gray-600">
+              {filter}
+              <button onClick={() => removeTag(filter)} className="text-gray-400 hover:text-black">×</button>
+            </div>
+          ))}
+          <button onClick={clearAllFilters} className="text-sm text-blue-600 font-medium ml-2 hover:underline">Clear all filter</button>
+        </div>
+      )}
 
       {/* --- Dynamic Product Grid/List --- */}
       <div className={viewMode === 'grid' 
         ? "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4" 
         : "flex flex-col gap-3"
       }>
-        {products.map((product) => (
+        {filteredProducts.map((product) => (
           <div 
             key={product.id} 
             className={`bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow ${
@@ -75,11 +90,11 @@ export default function ProductGallery() {
             }`}
           >
             {/* Image section */}
-            <div className={`flex items-center justify-center shrink-0 ${
+            <Link href={`/product/${product.id}`} className={`flex items-center justify-center shrink-0 ${
               viewMode === 'list' ? 'w-48 h-48' : 'w-full h-48 mb-4'
             }`}>
-              <img src={product.image} alt="Product" className="max-h-full object-contain" />
-            </div>
+              <img src={product.image} alt={product.name} className="max-h-full object-contain" />
+            </Link>
 
             {/* Content section */}
             <div className="flex-1">
@@ -100,21 +115,28 @@ export default function ProductGallery() {
               </div>
 
               <h3 className={`text-gray-700 mt-2 ${viewMode === 'grid' ? 'text-sm' : 'text-base font-medium'}`}>
-                {product.name}
+                <Link href={`/product/${product.id}`}>
+                  {product.name}
+                </Link>
               </h3>
 
               {/* Extras visible only in List View */}
               {viewMode === 'list' && (
                 <>
                   <p className="text-gray-500 text-sm mt-2 line-clamp-2">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    {product.description || 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'}
                   </p>
-                  <button className="text-blue-600 font-semibold text-sm mt-3 hover:underline">View details</button>
+                  <Link href={`/product/${product.id}`} className="text-blue-600 font-semibold text-sm mt-3 hover:underline">View details</Link>
                 </>
               )}
             </div>
           </div>
         ))}
+        {filteredProducts.length === 0 && (
+            <div className="col-span-full py-10 text-center text-gray-500">
+                No products found matching your criteria.
+            </div>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,7 @@
+'use client';
+
+import { useParams } from 'next/navigation';
+import { useCart } from '@/context/CartContext';
 import Header from '@/components/layout/Header';
 import Breadcrumb from '@/components/product/Breadcrumb';
 import ProductImageGallery from '@/components/product-detail/ProductImageGallery';
@@ -14,6 +18,10 @@ import Footer from '@/components/layout/Footer';
 import MobileProductDetail from '@/components/product-detail/MobileProductDetail'; 
 
 export default function ProductDetailPage() {
+  const { id } = useParams();
+  const { products } = useCart();
+  const product = products.find(p => p.id === parseInt(id));
+
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
     { label: 'Clothings', href: '/clothings' },
@@ -21,13 +29,17 @@ export default function ProductDetailPage() {
     { label: 'Summer clothing' }
   ];
 
+  if (!product) {
+    return <div className="p-10 text-center">Product not found</div>;
+  }
+
   return (
     <>
       {/* 2. MOBILE VIEW CONTAINER
         Visible only on screens smaller than 'lg' (1024px).
       */}
       <div className="block lg:hidden bg-gray-50">
-        <MobileProductDetail />
+        <MobileProductDetail product={product} />
         
         {/* Added Newsletter and Footer here for mobile */}
         <Newsletter />
@@ -48,17 +60,17 @@ export default function ProductDetailPage() {
           <div className="grid grid-cols-12 gap-6 mb-8">
             {/* Left - Product Images */}
             <div className="col-span-5">
-              <ProductImageGallery />
+              <ProductImageGallery product={product} />
             </div>
 
             {/* Middle - Product Info */}
             <div className="col-span-4">
-              <ProductInfo />
+              <ProductInfo product={product} />
             </div>
 
             {/* Right - Supplier Card & You May Like */}
             <div className="col-span-3 space-y-6">
-              <SupplierCard />
+              <SupplierCard product={product} />
             </div>
           </div>
 

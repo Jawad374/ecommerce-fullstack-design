@@ -1,12 +1,34 @@
+'use client';
+
 import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
 export default function FilterSidebar() {
-  const [priceMin, setPriceMin] = useState('0');
-  const [priceMax, setPriceMax] = useState('999999');
+  const { filters, setFilters } = useCart();
+  const [localPriceMin, setLocalPriceMin] = useState(filters.minPrice);
+  const [localPriceMax, setLocalPriceMax] = useState(filters.maxPrice);
 
-  const categories = ['Mobile accessory', 'Electronics', 'Smartphones', 'Modern tech'];
-  const brands = ['Samsung', 'Apple', 'Huawei', 'Pocco', 'Lenovo'];
+  const categories = ['Mobile accessory', 'Electronics', 'Smartphones', 'Modern tech', 'Clothings'];
+  const brands = ['Samsung', 'Apple', 'Huawei', 'Lenovo'];
   const features = ['Metallic', 'Plastic cover', '8GB Ram', 'Super power', 'Large Memory'];
+
+  const toggleFilter = (type, value) => {
+    setFilters(prev => {
+      const current = prev[type];
+      const updated = current.includes(value) 
+        ? current.filter(item => item !== value)
+        : [...current, value];
+      return { ...prev, [type]: updated };
+    });
+  };
+
+  const applyPrice = () => {
+    setFilters(prev => ({
+        ...prev,
+        minPrice: localPriceMin,
+        maxPrice: localPriceMax
+    }));
+  };
 
   return (
     <div className="w-60 bg-white p-4 font-sans text-gray-700">
@@ -18,7 +40,15 @@ export default function FilterSidebar() {
           <ChevronUpIcon />
         </div>
         <ul className="space-y-3 text-[15px] text-gray-500">
-          {categories.map(cat => <li key={cat} className="cursor-pointer hover:text-blue-600">{cat}</li>)}
+          {categories.map(cat => (
+             <li 
+                key={cat} 
+                className={`cursor-pointer hover:text-blue-600 ${filters.categories.includes(cat) ? 'text-blue-600 font-bold' : ''}`}
+                onClick={() => toggleFilter('categories', cat)}
+             >
+                {cat}
+             </li>
+          ))}
           <li className="text-blue-500 cursor-pointer pt-1">See all</li>
         </ul>
       </section>
@@ -34,7 +64,12 @@ export default function FilterSidebar() {
         <div className="space-y-3">
           {brands.map(brand => (
             <label key={brand} className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="w-4.5 h-4.5 rounded border-gray-300 text-blue-600 focus:ring-0" />
+              <input 
+                type="checkbox" 
+                className="w-4.5 h-4.5 rounded border-gray-300 text-blue-600 focus:ring-0"
+                checked={filters.brands.includes(brand)}
+                onChange={() => toggleFilter('brands', brand)}
+              />
               <span className="text-[15px]">{brand}</span>
             </label>
           ))}
@@ -78,14 +113,14 @@ export default function FilterSidebar() {
         <div className="flex gap-2 mb-3">
           <div className="flex-1">
             <span className="text-sm text-gray-900 mb-1 block">Min</span>
-            <input type="text" value={priceMin} onChange={(e) => setPriceMin(e.target.value)} className="w-full border border-gray-200 rounded-md p-2 text-sm bg-gray-50 focus:outline-none" />
+            <input type="number" value={localPriceMin} onChange={(e) => setLocalPriceMin(e.target.value)} className="w-full border border-gray-200 rounded-md p-2 text-sm bg-gray-50 focus:outline-none" />
           </div>
           <div className="flex-1">
             <span className="text-sm text-gray-900 mb-1 block">Max</span>
-            <input type="text" value={priceMax} onChange={(e) => setPriceMax(e.target.value)} className="w-full border border-gray-200 rounded-md p-2 text-sm bg-gray-50 focus:outline-none" />
+            <input type="number" value={localPriceMax} onChange={(e) => setLocalPriceMax(e.target.value)} className="w-full border border-gray-200 rounded-md p-2 text-sm bg-gray-50 focus:outline-none" />
           </div>
         </div>
-        <button className="w-full py-2.5 text-[#0D6EFD] border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 bg-white shadow-sm">
+        <button onClick={applyPrice} className="w-full py-2.5 text-[#0D6EFD] border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 bg-white shadow-sm">
           Apply
         </button>
       </section>

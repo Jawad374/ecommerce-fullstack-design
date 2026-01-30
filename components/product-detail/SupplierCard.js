@@ -1,6 +1,13 @@
-import React from 'react';
+'use client';
 
-export default function SupplierCard() {
+import React from 'react';
+import { useCart } from '@/context/CartContext';
+
+export default function SupplierCard({ product }) {
+  const { addToCart } = useCart();
+  
+  if (!product) return null;
+
   return (
     <div className="max-w-70 bg-white border border-[#e3e8ee] rounded-md p-4 shadow-sm">
       {/* Supplier Info Header */}
@@ -45,8 +52,11 @@ export default function SupplierCard() {
 
       {/* Action Buttons */}
       <div className="space-y-2">
-        <button className="w-full py-2.5 bg-[#127fff] text-white rounded-md font-medium text-[15px] hover:bg-blue-600 transition-colors">
-          Send inquiry
+        <button 
+          onClick={() => addToCart(product)}
+          className="w-full py-2.5 bg-[#127fff] text-white rounded-md font-medium text-[15px] hover:bg-blue-600 transition-colors"
+        >
+          Add to Cart
         </button>
         <button className="w-full py-2.5 bg-white border border-[#dee2e7] text-[#127fff] rounded-md font-medium text-[15px] hover:bg-gray-50 transition-colors">
           Seller's profile

@@ -1,6 +1,7 @@
 import React from 'react';
 
-export default function ProductInfo() {
+export default function ProductInfo({ product }) {
+  if (!product) return null;
   return (
     <div className="max-w-xl font-sans p-4 bg-white">
       {/* Stock Status */}
@@ -13,7 +14,7 @@ export default function ProductInfo() {
 
       {/* Product Title */}
       <h1 className="text-[22px] leading-tight font-semibold text-[#1c1c1c] mb-3">
-        Mens Long Sleeve T-shirt Cotton Base Layer Slim Muscle
+        {product.name}
       </h1>
 
       {/* Rating and Reviews Row */}
@@ -23,7 +24,7 @@ export default function ProductInfo() {
             {[...Array(4)].map((_, i) => <span key={i}>★</span>)}
             <span className="text-[#dee2e7]">★</span>
           </div>
-          <span className="text-[#ff9017] font-medium ml-1">9.3</span>
+          <span className="text-[#ff9017] font-medium ml-1">{product.rating}</span>
         </div>
         <span className="mx-2 text-[#dee2e7]">•</span>
         <div className="flex items-center gap-1.5">
@@ -44,15 +45,15 @@ export default function ProductInfo() {
       {/* Pricing Section - The "Peach" Box */}
       <div className="bg-[#fff0df] p-4 flex gap-0 mb-6 border-l-0">
         <div className="flex-1 border-r border-[#f7e1c1] pr-4">
-          <div className="text-[18px] font-bold text-[#fa3434]">$98.00</div>
+          <div className="text-[18px] font-bold text-[#fa3434]">${product.price.toFixed(2)}</div>
           <div className="text-[13px] text-[#8b96a5]">50-100 pcs</div>
         </div>
         <div className="flex-1 border-r border-[#f7e1c1] px-6">
-          <div className="text-[18px] font-bold text-[#1c1c1c]">$90.00</div>
+          <div className="text-[18px] font-bold text-[#1c1c1c]">${(product.price * 0.9).toFixed(2)}</div>
           <div className="text-[13px] text-[#8b96a5]">100-700 pcs</div>
         </div>
         <div className="flex-1 pl-6">
-          <div className="text-[18px] font-bold text-[#1c1c1c]">$78.00</div>
+          <div className="text-[18px] font-bold text-[#1c1c1c]">${(product.price * 0.8).toFixed(2)}</div>
           <div className="text-[13px] text-[#8b96a5]">700+ pcs</div>
         </div>
       </div>

@@ -1,22 +1,35 @@
 import React from 'react';
-import { ArrowLeft, ShoppingCart, User, Star, Heart, ChevronRight, CheckCircle, Globe, ShieldCheck } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { ArrowLeft, ShoppingCart, User, Star, Heart, ChevronRight, ShieldCheck, Globe, Truck } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-export default function MobileProductDetail() {
+export default function MobileProductDetail({ product }) {
+  const { addToCart, cartItems } = useCart();
+  const router = useRouter();
+
+  if (!product) return null;
+
   return (
     <div className="bg-gray-50 min-h-screen pb-8 font-sans">
       
       {/* --- Header --- */}
       <header className="sticky top-0 z-50 bg-white flex justify-between items-center px-4 h-14 border-b border-gray-100">
-        <button className="-ml-2 p-2">
+        <button className="-ml-2 p-2" onClick={() => router.back()}>
           <ArrowLeft className="w-6 h-6 text-gray-800" />
         </button>
         <div className="flex gap-2">
-          <button className="p-2">
+          <Link href="/cart" className="p-2 relative">
             <ShoppingCart className="w-6 h-6 text-gray-800" />
-          </button>
-          <button className="p-2 -mr-2">
+            {cartItems.length > 0 && (
+                <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
+                {cartItems.length}
+                </span>
+            )}
+          </Link>
+          <Link href="/login" className="p-2 -mr-2">
             <User className="w-6 h-6 text-gray-800" />
-          </button>
+          </Link>
         </div>
       </header>
 
@@ -26,8 +39,8 @@ export default function MobileProductDetail() {
             {/* Main Image Placeholder */}
             <div className="w-3/4 h-3/4 relative">
               <img 
-                src="https://via.placeholder.com/600x600/f3f4f6/9ca3af?text=Gray+Polo" 
-                alt="Product" 
+                src={product.image} 
+                alt={product.name} 
                 className="w-full h-full object-contain mix-blend-multiply"
               />
             </div>
@@ -55,7 +68,7 @@ export default function MobileProductDetail() {
             <Star className="w-4 h-4 fill-current" />
             <Star className="w-4 h-4 text-gray-300 fill-gray-200" />
           </div>
-          <span className="text-orange-400 font-medium ml-1 text-sm">4.5</span>
+          <span className="text-orange-400 font-medium ml-1 text-sm">{product.rating || 4.5}</span>
           <span className="text-gray-300 mx-2 text-xs">•</span>
           <span className="text-gray-400 text-sm">32 reviews</span>
           <span className="text-gray-300 mx-2 text-xs">•</span>
@@ -64,19 +77,22 @@ export default function MobileProductDetail() {
 
         {/* Title */}
         <h1 className="text-lg font-semibold text-gray-900 mb-2 leading-snug">
-          Product name goes here
+          {product.name}
         </h1>
         
         {/* Price */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-xl font-bold text-red-600">$129.95</span>
+          <span className="text-xl font-bold text-red-600">${product.price}</span>
           <span className="text-sm text-gray-400 font-normal">(50-100 pcs)</span>
         </div>
 
         {/* Action Buttons */}
         <div className="flex gap-2 mb-6 h-11">
-          <button className="flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium rounded-md shadow-sm text-sm transition-colors">
-            Send inquiry
+          <button 
+            onClick={() => addToCart(product)}
+            className="flex-1 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-medium rounded-md shadow-sm text-sm transition-colors"
+          >
+            Add to cart
           </button>
           <button className="aspect-square border border-gray-200 rounded-md bg-white flex items-center justify-center">
             <Heart className="w-6 h-6 text-blue-500" />

@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 export default function DealsSection() {
   const deals = [
@@ -42,7 +43,8 @@ export default function DealsSection() {
           {/* Desktop: Grid-like flex | Mobile: Horizontal Scroll (no-scrollbar) */}
           <div className="flex-1 flex overflow-x-auto no-scrollbar divide-x divide-gray-200">
             {deals.map((deal, idx) => (
-              <div 
+              <Link 
+                href="/products"
                 key={idx} 
                 className="min-w-35 md:min-w-0 md:flex-1 p-4 flex flex-col items-center justify-center hover:bg-gray-50 transition-colors cursor-pointer text-center"
               >
@@ -53,13 +55,13 @@ export default function DealsSection() {
                     className="max-h-full max-w-full object-contain mix-blend-multiply" 
                   />
                 </div>
-                <h4 className="text-xs md:text-sm text-gray-700 font-normal mb-2 leading-tight px-1">
+                <h4 className="text-xs md:text-sm text-gray-700 font-normal mb-2 leading-tight px-1 text-center">
                   {deal.name}
                 </h4>
                 <span className="bg-[#FFE3E3] text-[#EB001B] px-3 py-1 rounded-full text-[10px] md:text-xs font-bold">
                   {deal.discount}
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
 

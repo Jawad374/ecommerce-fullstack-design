@@ -27,7 +27,7 @@ export default function HeroSection() {
               {categories.map((category, index) => (
                 <Link
                   key={index}
-                  href={`/category/${category.toLowerCase().replace(/\s+/g, '-')}`}
+                  href="/products"
                   className={`block px-4 py-2.5 text-sm transition-colors ${
                     index === 0 
                     ? 'bg-[#E5F1FF] font-semibold text-gray-900 rounded-md' 
@@ -58,9 +58,11 @@ export default function HeroSection() {
                 <h1 className="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6">
                   Electronic items
                 </h1>
-                <button className="px-4 py-2 md:px-6 md:py-2.5 bg-white text-blue-600 rounded-lg font-medium shadow-sm hover:bg-gray-50 transition-colors">
-                  Learn more
-                </button>
+                <Link href="/products">
+                  <button className="px-4 py-2 md:px-6 md:py-2.5 bg-white text-blue-600 rounded-lg font-medium shadow-sm hover:bg-gray-50 transition-colors cursor-pointer">
+                    Learn more
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -84,12 +86,12 @@ export default function HeroSection() {
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <button className="w-full py-2 bg-[#0D6EFD] text-white rounded-md text-sm font-medium hover:bg-blue-700">
+                <Link href="/login" className="w-full py-2 bg-[#0D6EFD] text-white rounded-md text-sm font-medium hover:bg-blue-700 block text-center">
                   Join now
-                </button>
-                <button className="w-full py-2 bg-white text-[#0D6EFD] border border-gray-100 rounded-md text-sm font-medium hover:bg-gray-50">
+                </Link>
+                <Link href="/login" className="w-full py-2 bg-white text-[#0D6EFD] border border-gray-100 rounded-md text-sm font-medium hover:bg-gray-50 block text-center">
                   Log in
-                </button>
+                </Link>
               </div>
             </div>
 

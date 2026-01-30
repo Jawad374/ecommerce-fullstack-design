@@ -1,19 +1,12 @@
 'use client';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 export default function RecommendedSection() {
-  const products = [
-    { name: 'T-shirts with multiple colors, for men', price: '$10.30', image: '/Image/cloth/1.jpg' },
-    { name: 'Jeans shorts for men blue color', price: '$10.30', image: '/Image/cloth/2.jpg' },
-    { name: 'Brown winter coat medium size', price: '$12.50', image: '/Image/cloth/3.jpg' },
-    { name: 'Jeans bag for travel for men', price: '$34.00', image: '/Image/cloth/5.jpg' },
-    { name: 'Leather wallet', price: '$9.00', image: '/Image/cloth/6.jpg' },
-    { name: 'Canon camera black, 100x zoom', price: '$999.99', image: '/Image/tech/6.jpg' },
-    { name: 'Headset for gaming with mic', price: '$80.99', image: '/Image/tech/5.jpg' },
-    { name: 'Smartwatch silver color modern', price: '$10.30', image: '/Image/tech/8.jpg' },
-    { name: 'SmartPhone From Apple', price: '$999.30', image: '/Image/tech/1.jpg' },
-    { name: 'Laptop for office work ', price: '$500.95', image: '/Image/tech/7.jpg' },
-  ];
+  const { products } = useCart();
+  
+  // Use context products, fallback to empty array if loading/undefined
+  const recommendedProducts = products || [];
 
   const services = [
     { title: 'Source from Industry Hubs', image: '/Image/others/step1.png', iconImage: '/icons/1.png' },
@@ -43,18 +36,22 @@ export default function RecommendedSection() {
           <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-6">Recommended items</h2>
           {/* Mobile: 2 columns | Desktop: 5 columns */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-6">
-            {products.map((product, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden border border-gray-200 md:border-gray-100 hover:shadow-lg transition-shadow cursor-pointer">
+            {recommendedProducts.map((product) => (
+              <Link 
+                href={`/product/${product.id}`} 
+                key={product.id} 
+                className="bg-white rounded-lg overflow-hidden border border-gray-200 md:border-gray-100 hover:shadow-lg transition-shadow cursor-pointer block"
+              >
                 <div className="relative bg-white p-2">
                   <div className="aspect-square flex items-center justify-center">
                     <img src={product.image} alt={product.name} className="max-w-full max-h-full object-contain" />
                   </div>
                 </div>
                 <div className="p-3 md:p-4">
-                  <p className="text-sm font-bold text-gray-900 mb-1">{product.price}</p>
+                  <p className="text-sm font-bold text-gray-900 mb-1">${product.price}</p>
                   <p className="text-xs md:text-sm text-gray-500 line-clamp-2 leading-relaxed">{product.name}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

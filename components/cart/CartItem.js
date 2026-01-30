@@ -17,7 +17,7 @@ export default function CartItem({ item, onRemove, onQuantityChange, onSaveForLa
       {/* Product Image - Centered image within border */}
       <div className="w-24 h-24 border border-gray-200 rounded-md flex items-center justify-center p-2 shrink-0">
         <img 
-          src={item.imageSrc} 
+          src={item.image} 
           alt={item.name} 
           className="max-w-full max-h-full object-contain" 
         />

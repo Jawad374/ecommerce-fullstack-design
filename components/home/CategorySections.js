@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 export default function CategorySections() {
   const homeOutdoor = [
@@ -47,20 +48,24 @@ export default function CategorySections() {
                 <span key={i}>{word}<br /></span>
               ))}
             </h3>
-            <button className="mt-4 px-4 py-2 bg-white text-gray-800 rounded-md text-sm font-medium w-fit shadow-sm hover:shadow">
-              Source now
-            </button>
+            <Link href="/products">
+              <button className="mt-4 px-4 py-2 bg-white text-gray-800 rounded-md text-sm font-medium w-fit shadow-sm hover:shadow cursor-pointer">
+                Source now
+              </button>
+            </Link>
           </div>
         </div>
 
         {/* Products Grid (Desktop) / Horizontal Scroller (Mobile) */}
         <div className="flex-1 flex md:grid md:grid-cols-4 overflow-x-auto no-scrollbar divide-x md:divide-x-0 divide-gray-200">
           {items.map((item, index) => (
-            <div
+            <Link
+              href="/products"
               key={index}
               className={`p-3 md:p-3 flex flex-col md:flex-row items-center md:justify-between bg-white min-w-35 md:min-w-0
                 ${index % 4 !== 0 ? 'md:border-l md:border-gray-200' : ''}
-                ${index >= 4 ? 'md:border-t md:border-gray-200' : ''}`}
+                ${index >= 4 ? 'md:border-t md:border-gray-200' : ''}
+                hover:shadow-inner transition-shadow`}
             >
               {/* Product Info (Moves below image on mobile) */}
               <div className="order-2 md:order-1 flex-1 min-w-0 md:w-auto mt-2 md:mt-0 w-full">
@@ -72,19 +77,19 @@ export default function CategorySections() {
               <div className="order-1 md:order-2 w-20 h-20 md:w-20 md:h-20 flex items-center justify-center shrink-0">
                 <img src={item.image} alt={item.name} className="max-w-full max-h-full object-contain mix-blend-multiply" />
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
 
       {/* Mobile Source Now Link (Shown only on mobile) */}
       <div className="md:hidden border-t border-gray-100 p-4">
-        <button className="text-blue-600 font-medium flex items-center gap-2 text-sm">
+        <Link href="/products" className="text-blue-600 font-medium flex items-center gap-2 text-sm">
           Source now
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
           </svg>
-        </button>
+        </Link>
       </div>
     </div>
   );

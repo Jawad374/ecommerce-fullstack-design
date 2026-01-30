@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 import Header from '@/components/layout/Header';
 import CartItem from '@/components/cart/CartItem';
 import CartSummary from '@/components/cart/CartSummary';
@@ -14,50 +14,14 @@ import Link from 'next/link';
 import MobileCart from '@/components/cart/MobileCart'; 
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'T-shirts with multiple colors, for men and lady',
-      size: 'medium',
-      color: 'blue',
-      material: 'Plastic',
-      seller: 'Artel Market',
-      price: 78.99,
-      quantity: 9,
-      image: '👕'
-    },
-    {
-      id: 2,
-      name: 'T-shirts with multiple colors, for men and lady',
-      size: 'medium',
-      color: 'blue',
-      material: 'Plastic',
-      seller: 'Best factory LLC',
-      price: 39.00,
-      quantity: 3,
-      image: '👕'
-    },
-    {
-      id: 3,
-      name: 'T-shirts with multiple colors, for men and lady',
-      size: 'medium',
-      color: 'blue',
-      material: 'Plastic',
-      seller: 'Artel Market',
-      price: 170.50,
-      quantity: 1,
-      image: '👕'
-    }
-  ]);
+  const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
 
   const handleRemoveItem = (id) => {
-    setCartItems(cartItems.filter(item => item.id !== id));
+    removeFromCart(id);
   };
 
   const handleQuantityChange = (id, newQuantity) => {
-    setCartItems(cartItems.map(item => 
-      item.id === id ? { ...item, quantity: newQuantity } : item
-    ));
+    updateQuantity(id, newQuantity);
   };
 
   const handleSaveForLater = (id) => {
@@ -65,13 +29,13 @@ export default function CartPage() {
   };
 
   const handleRemoveAll = () => {
-    setCartItems([]);
+    clearCart();
   };
 
   // Calculate totals
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = 60.00;
-  const tax = 14.00;
+  const discount = 0.00; // Simplified
+  const tax = subtotal * 0.1; // Simplified tax
   const total = subtotal - discount + tax;
 
   return (
@@ -109,6 +73,7 @@ export default function CartPage() {
                     onSaveForLater={handleSaveForLater}
                   />
                 ))}
+                {cartItems.length === 0 && <p className="text-gray-500">Your cart is empty.</p>}
               </div>
 
               {/* Action Buttons */}
