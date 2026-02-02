@@ -170,7 +170,7 @@ export default function ProductsPage() {
                 <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 flex-shrink-0"></div>
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 shrink-0"></div>
                       <span className="font-medium text-gray-900">{product.name}</span>
                     </div>
                   </td>

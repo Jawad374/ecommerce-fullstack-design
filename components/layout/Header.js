@@ -213,7 +213,7 @@ export default function Header() {
               <div className="flex flex-col">
                 {user ? (
                    <>
-                     <span className="text-gray-900 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
+                     <span className="text-gray-900 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-37.5">
                        {user.name || user.email}
                      </span>
                      <button onClick={logout} className="text-blue-600 text-sm text-left">Logout</button>
