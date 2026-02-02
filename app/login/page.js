@@ -5,12 +5,24 @@ import Link from 'next/link';
 import { Eye, EyeOff, Facebook, Lock, User, Mail, ShoppingBag } from 'lucide-react';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
+import Modal from '@/components/common/Modal';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  
+  // Modal State
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'success'
+  });
+
   const router = useRouter();
+  const { login } = useUser();
 
   // Form states
   const [formData, setFormData] = useState({
@@ -21,6 +33,9 @@ export default function LoginPage() {
     confirmPassword: '',
     rememberMe: false
   });
+  
+  // Error states
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -28,16 +43,115 @@ export default function LoginPage() {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear error when user types
+    if (errors[name]) {
+       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const validate = () => {
+     const newErrors = {};
+     
+     // Email validation
+     if (!formData.email) {
+       newErrors.email = 'Email is required';
+     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+       newErrors.email = 'Email is invalid';
+     }
+
+     // Password validation
+     if (!formData.password) {
+       newErrors.password = 'Password is required';
+     } else if (formData.password.length < 6) {
+       newErrors.password = 'Password must be at least 6 characters';
+     }
+
+     if (!isLogin) {
+       // Name validation
+       if (!formData.name.trim()) {
+         newErrors.name = 'First name is required';
+       }
+       // Surname validation
+       if (!formData.surname.trim()) {
+         newErrors.surname = 'Last name is required';
+       }
+     }
+
+     setErrors(newErrors);
+     return Object.keys(newErrors).length === 0;
+  };
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+    // If it was a successful registration, switch to login view
+    if (modalConfig.type === 'success' && !isLogin && modalConfig.title === 'Success') {
+      setIsLogin(true);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData, isLogin ? 'Login' : 'Register');
-    router.push('/');
+    
+    if (!validate()) return;
+    
+    try {
+      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
+      const body = isLogin 
+        ? { email: formData.email, password: formData.password }
+        : { 
+            name: formData.name, 
+            surname: formData.surname, 
+            email: formData.email, 
+            password: formData.password 
+          };
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setModalConfig({
+          isOpen: true,
+          title: 'Error',
+          message: data.message || 'Something went wrong',
+          type: 'error'
+        });
+        return;
+      }
+
+      console.log('Success:', data);
+      
+      if (isLogin) {
+         login(data.user); 
+      } else {
+         setModalConfig({
+           isOpen: true,
+           title: 'Success',
+           message: 'Account created successfully! Please login with your new credentials.',
+           type: 'success'
+         });
+         // Switch to login view is handled in closeModal or here immediately if we prefer
+         // But letting user read the message first is better.
+      }
+
+    } catch (err) {
+      console.error('An error occurred', err);
+      setModalConfig({
+        isOpen: true,
+        title: 'Error',
+        message: 'An unexpected error occurred. Please try again.',
+        type: 'error'
+      });
+    }
   };
 
   const toggleMode = () => {
     setIsLogin(!isLogin);
+    setErrors({});
     setFormData({
       name: '',
       surname: '',
@@ -50,6 +164,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col font-sans">
+      <Modal 
+        isOpen={modalConfig.isOpen} 
+        onClose={closeModal} 
+        title={modalConfig.title} 
+        message={modalConfig.message} 
+        type={modalConfig.type} 
+      />
       <div className="hidden md:block">
         <Header />
       </div>
@@ -113,7 +234,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 {!isLogin && (
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -124,8 +245,11 @@ export default function LoginPage() {
                            placeholder="First Name" 
                            value={formData.name}
                            onChange={handleChange}
-                           className="w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400"
+                           className={`w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400 ${
+                             errors.name ? 'border-red-500 ring-2 ring-red-500/20' : 'border-transparent'
+                           }`}
                          />
+                         {errors.name && <p className="text-red-500 text-xs mt-1 ml-1">{errors.name}</p>}
                         </div>
                         <div>
                          <label className="sr-only">Last Name</label>
@@ -135,8 +259,11 @@ export default function LoginPage() {
                            placeholder="Last Name" 
                            value={formData.surname}
                            onChange={handleChange}
-                           className="w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400"
+                           className={`w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400 ${
+                             errors.surname ? 'border-red-500 ring-2 ring-red-500/20' : 'border-transparent'
+                           }`}
                          />
+                         {errors.surname && <p className="text-red-500 text-xs mt-1 ml-1">{errors.surname}</p>}
                         </div>
                     </div>
                 )}
@@ -151,8 +278,11 @@ export default function LoginPage() {
                         placeholder="user@example.com"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400"
+                        className={`w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400 ${
+                          errors.email ? 'border-red-500 ring-2 ring-red-500/20' : 'border-transparent'
+                        }`}
                     />
+                    {errors.email && <p className="text-red-500 text-xs mt-1 ml-1">{errors.email}</p>}
                 </div>
 
                 <div>
@@ -169,7 +299,9 @@ export default function LoginPage() {
                             placeholder="••••••••"
                             value={formData.password}
                             onChange={handleChange}
-                            className="w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border-none outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400"
+                            className={`w-full bg-gray-50 text-gray-900 px-4 py-3.5 rounded-xl border outline-none focus:ring-2 focus:ring-blue-500/20 transition-all font-medium placeholder:text-gray-400 ${
+                              errors.password ? 'border-red-500 ring-2 ring-red-500/20' : 'border-transparent'
+                            }`}
                         />
                         <button 
                             type="button" 
@@ -179,6 +311,7 @@ export default function LoginPage() {
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                         </button>
                     </div>
+                    {errors.password && <p className="text-red-500 text-xs mt-1 ml-1">{errors.password}</p>}
                 </div>
 
                 <button 

@@ -1,8 +1,10 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useUser } from '@/context/UserContext';
 
 export default function HeroSection() {
+  const { user, logout } = useUser();
   const categories = [
     'Automobiles',
     'Clothes and wear',
@@ -80,18 +82,33 @@ export default function HeroSection() {
                       </svg>
                    </div>
                 </div>
-                <div className="leading-tight">
-                  <p className="text-sm text-gray-800">Hi, user</p>
-                  <p className="text-sm text-gray-800 font-normal">let's get started</p>
+                <div className="leading-tight overflow-hidden">
+                  <p className="text-sm text-gray-800 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+                    Hi, {user ? (user.name || user.email.split('@')[0]) : 'user'}
+                  </p>
+                  <p className="text-sm text-gray-800 font-normal">
+                    {user ? 'Welcome back' : "let's get started"}
+                  </p>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <Link href="/login" className="w-full py-2 bg-[#0D6EFD] text-white rounded-md text-sm font-medium hover:bg-blue-700 block text-center">
-                  Join now
-                </Link>
-                <Link href="/login" className="w-full py-2 bg-white text-[#0D6EFD] border border-gray-100 rounded-md text-sm font-medium hover:bg-gray-50 block text-center">
-                  Log in
-                </Link>
+                {user ? (
+                  <button 
+                    onClick={logout} 
+                    className="w-full py-2 bg-[#0D6EFD] text-white rounded-md text-sm font-medium hover:bg-blue-700 block text-center"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <>
+                    <Link href="/login" className="w-full py-2 bg-[#0D6EFD] text-white rounded-md text-sm font-medium hover:bg-blue-700 block text-center">
+                      Join now
+                    </Link>
+                    <Link href="/login" className="w-full py-2 bg-white text-[#0D6EFD] border border-gray-100 rounded-md text-sm font-medium hover:bg-gray-50 block text-center">
+                      Log in
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
 

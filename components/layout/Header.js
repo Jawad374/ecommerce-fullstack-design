@@ -2,10 +2,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
+import { useUser } from '@/context/UserContext';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cartItems, searchQuery, setSearchQuery } = useCart();
+  const { user, logout } = useUser();
 
   return (
     <header className="bg-white border-b border-gray-200">
@@ -47,11 +49,19 @@ export default function Header() {
                   </span>
                 )}
               </Link>
-              <Link href="/login" className="text-gray-800">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-              </Link>
+              {user ? (
+                 <button onClick={logout} className="text-gray-800">
+                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                   </svg>
+                 </button>
+              ) : (
+                <Link href="/login" className="text-gray-800">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </Link>
+              )}
             </div>
           </div>
 
@@ -83,12 +93,21 @@ export default function Header() {
 
           {/* Desktop Navigation Icons */}
           <div className="hidden md:flex items-center gap-7 flex-none">
-            <Link href="/login" className="flex flex-col items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span className="text-[12px] font-medium text-gray-400">Profile</span>
-            </Link>
+            {user ? (
+              <button onClick={logout} className="flex flex-col items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span className="text-[12px] font-medium text-gray-400">Logout</span>
+              </button>
+            ) : (
+              <Link href="/login" className="flex flex-col items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span className="text-[12px] font-medium text-gray-400">Sign In</span>
+              </Link>
+            )}
             <button className="flex flex-col items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors">
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
@@ -186,15 +205,26 @@ export default function Header() {
           {/* Header with User Profile */}
           <div className="bg-gray-50 p-4 border-b border-gray-200">
             <div className="flex items-center gap-3">
-              <Link href="/login" className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                 <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                 </svg>
-              </Link>
-              <div>
-                <Link href="/login" className="text-gray-900 font-medium">Sign in</Link>
-                <span className="mx-1 text-gray-400">|</span>
-                <Link href="/login" className="text-gray-900 font-medium">Register</Link>
+              </div>
+              <div className="flex flex-col">
+                {user ? (
+                   <>
+                     <span className="text-gray-900 font-medium whitespace-nowrap overflow-hidden text-ellipsis max-w-[150px]">
+                       {user.name || user.email}
+                     </span>
+                     <button onClick={logout} className="text-blue-600 text-sm text-left">Logout</button>
+                   </>
+                ) : (
+                   <div>
+                     <Link href="/login" className="text-gray-900 font-medium">Sign in</Link>
+                     <span className="mx-1 text-gray-400">|</span>
+                     <Link href="/login" className="text-gray-900 font-medium">Register</Link>
+                   </div>
+                )}
               </div>
             </div>
           </div>
