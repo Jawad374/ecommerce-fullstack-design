@@ -34,7 +34,11 @@ export function UserProvider({ children }) {
 
   const login = (userData) => {
     setUser(userData);
-    router.push('/');
+    if (userData.role === 'admin') {
+      router.push('/admin');
+    } else {
+      router.push('/');
+    }
   };
 
   const logout = async () => {
