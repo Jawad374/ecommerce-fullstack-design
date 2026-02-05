@@ -7,8 +7,20 @@ export default function ProductImageGallery({ product }) {
   
   if (!product) return null;
 
-  // Use product image or fallbacks
-  const images = [product.image, product.image, product.image, product.image, product.image, product.image];
+  // Handle both DB structure (images array) and Context structure (single image string)
+  let images = [];
+  if (product.images && product.images.length > 0) {
+    images = product.images;
+  } else if (product.image) {
+    images = [product.image, product.image, product.image, product.image]; // Fallback for single image
+  } else {
+    images = ['https://placehold.co/500x500?text=No+Image'];
+  }
+  
+  // Ensure we have at least a few images for the gallery view if only 1 is provided
+  if (images.length === 1) {
+     images = [images[0], images[0], images[0]];
+  }
 
   return (
     <div className="space-y-4">

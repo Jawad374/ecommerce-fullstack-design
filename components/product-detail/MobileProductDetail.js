@@ -39,7 +39,7 @@ export default function MobileProductDetail({ product }) {
             {/* Main Image Placeholder */}
             <div className="w-3/4 h-3/4 relative">
               <img 
-                src={product.image} 
+                src={product.images && product.images.length > 0 ? product.images[0] : (product.image || 'https://placehold.co/500x500?text=No+Image')} 
                 alt={product.name} 
                 className="w-full h-full object-contain mix-blend-multiply"
               />

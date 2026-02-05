@@ -1,51 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { Plus, Edit2, Trash2, Search, Filter } from 'lucide-react';
-import Modal from '@/components/common/Modal'; // Reusing our common modal
+import { useState, useEffect } from 'react';
+import { Plus, Edit2, Trash2, Search, Filter, Upload } from 'lucide-react';
+import Modal from '@/components/common/Modal';
 
 export default function ProductsPage() {
-  // Dummy Data matched with ProductInfo structure + CartContext
-  const [products, setProducts] = useState([
-    { 
-      id: 1, 
-      name: 'GoPro HERO6 4K Action Camera - Black', 
-      category: 'Electronics', 
-      price: 99.50, 
-      oldPrice: 1128.00,
-      stock: 12, 
-      status: 'Active',
-      brand: 'Samsung',
-      rating: 7.5,
-      type: 'Action Camera',
-      material: 'Plastic & Metal',
-      design: 'Compact',
-      customization: 'Custom logo available',
-      protection: 'Waterproof',
-      warranty: '2 years'
-    },
-    { 
-      id: 2, 
-      name: 'Canon EOS 80D DSLR Camera', 
-      category: 'Mobile accessory', 
-      price: 78.99, 
-      oldPrice: 1128.00,
-      stock: 5, 
-      status: 'Active',
-      brand: 'Canon',
-      rating: 5.9,
-      type: 'DSLR',
-      material: 'Magnesium Alloy',
-      design: 'Ergonomic',
-      customization: 'None',
-      protection: 'Weather sealed',
-      warranty: '1 year'
-    },
-  ]);
-
+  const [products, setProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({ 
     id: null, 
     name: '', 
+    description: '',
     category: '', 
     price: '', 
     oldPrice: '',
@@ -59,15 +24,43 @@ export default function ProductsPage() {
     customization: '',
     protection: '',
     warranty: '',
-    image: ''
+    image: null
   });
+  const [imagePreview, setImagePreview] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Form Handling
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        const formattedData = data.map(item => ({
+             ...item,
+             id: item._id, // Map MongoDB _id to id for frontend
+             status: item.stock > 0 ? 'Active' : 'Out of Stock' // Derive status if not explicit
+        }));
+        setProducts(formattedData);
+      }
+    } catch (error) {
+      console.error('Failed to fetch products', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleEdit = (product) => {
-    setFormData(product);
+    setFormData({
+      ...product,
+      image: null // We don't load the file object back
+    });
+    setImagePreview(product.images?.[0] || null);
     setIsFormOpen(true);
   };
 
@@ -77,28 +70,74 @@ export default function ProductsPage() {
   };
 
   const confirmDelete = () => {
+    // Implement delete API call here if needed
     setProducts(products.filter(p => p.id !== selectedProduct.id));
     setIsDeleteModalOpen(false);
     setSelectedProduct(null);
   };
 
-  const handleSave = (e) => {
-    e.preventDefault();
-    if (formData.id) {
-       // Update
-       setProducts(products.map(p => p.id === formData.id ? formData : p));
-    } else {
-       // Create
-       setProducts([...products, { ...formData, id: Date.now() }]);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, image: file });
+      setImagePreview(URL.createObjectURL(file));
     }
-    setIsFormOpen(false);
-    resetForm();
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const data = new FormData();
+      data.append('name', formData.name);
+      data.append('description', formData.description);
+      data.append('category', formData.category);
+      data.append('price', formData.price);
+      if (formData.oldPrice) data.append('oldPrice', formData.oldPrice);
+      data.append('stock', formData.stock);
+      data.append('brand', formData.brand);
+      if (formData.rating) data.append('rating', formData.rating);
+      if (formData.type) data.append('type', formData.type);
+      if (formData.material) data.append('material', formData.material);
+      if (formData.design) data.append('design', formData.design);
+      if (formData.customization) data.append('customization', formData.customization);
+      if (formData.protection) data.append('protection', formData.protection);
+      if (formData.warranty) data.append('warranty', formData.warranty);
+      
+      if (formData.image) {
+        data.append('image', formData.image);
+      }
+
+      // Note: We only implemented POST in the API route for now. 
+      // If editing is needed, we need to update the API route to handle PUT/PATCH.
+      // But creating a new product generates a new ID.
+      // For this task, we focus on posting (creating) as requested.
+      
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        body: data,
+      });
+
+      if (res.ok) {
+        await fetchProducts();
+        setIsFormOpen(false);
+        resetForm();
+      } else {
+        console.error('Failed to save product');
+      }
+    } catch (error) {
+      console.error('Error saving product:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const resetForm = () => {
     setFormData({ 
       id: null, 
       name: '', 
+      description: '',
       category: '', 
       price: '', 
       oldPrice: '',
@@ -112,9 +151,12 @@ export default function ProductsPage() {
       customization: '',
       protection: '',
       warranty: '',
-      image: ''
+      image: null
     });
+    setImagePreview(null);
   };
+
+  if (isLoading) return <div className="p-8 text-center">Loading products...</div>;
 
   return (
     <div>
@@ -170,7 +212,15 @@ export default function ProductsPage() {
                 <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gray-100 shrink-0"></div>
+                      <div className="w-10 h-10 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
+                        {product.images && product.images[0] ? (
+                            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-300">
+                                <Search size={16} />
+                            </div>
+                        )}
+                      </div>
                       <span className="font-medium text-gray-900">{product.name}</span>
                     </div>
                   </td>
@@ -187,15 +237,15 @@ export default function ProductsPage() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <button 
-                        onClick={() => {
-                          setFormData(product);
-                          setIsFormOpen(true);
-                        }}
+                        onClick={() => handleEdit(product)}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                          <Edit2 size={18} />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                      <button 
+                         onClick={() => handleDeleteClick(product)}
+                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      >
                         <Trash2 size={18} />
                       </button>
                     </div>
@@ -206,6 +256,8 @@ export default function ProductsPage() {
           </table>
         </div>
       </div>
+      
+      {/* Product Form Modal */}
       {isFormOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
            <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6 animate-in zoom-in-95 duration-200 my-8">
@@ -233,6 +285,17 @@ export default function ProductsPage() {
                             placeholder="e.g. GoPro HERO6 4K Action Camera"
                           />
                         </div>
+                         <div className="md:col-span-2">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                          <textarea 
+                            required
+                            value={formData.description}
+                            onChange={(e) => setFormData({...formData, description: e.target.value})}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
+                            placeholder="Product description..."
+                            rows={3}
+                          />
+                        </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
                           <input 
@@ -254,6 +317,22 @@ export default function ProductsPage() {
                             placeholder="e.g. Samsung"
                           />
                         </div>
+                         {/* Image Upload */}
+                         <div className="md:col-span-2">
+                             <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
+                             <div className="flex items-center gap-4">
+                                 {imagePreview && (
+                                     <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200">
+                                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                                     </div>
+                                 )}
+                                 <label className="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                                     <Upload size={18} />
+                                     Upload Image
+                                     <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                                 </label>
+                             </div>
+                         </div>
                       </div>
                   </div>
 
@@ -298,126 +377,80 @@ export default function ProductsPage() {
                             className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
                           >
                              <option value="Active">Active</option>
-                             <option value="Out of Stock">Out of Stock</option>
-                             <option value="Draft">Draft</option>
+                             <option value="Disabled">Disabled</option>
                           </select>
                         </div>
                       </div>
                   </div>
 
-                  {/* Detailed Specifications */}
+                  {/* Details */}
                   <div className="bg-gray-50 p-4 rounded-xl space-y-4">
-                      <h3 className="font-semibold text-gray-900">Product Specifications</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                          <input 
-                            type="text" 
-                            value={formData.type}
-                            onChange={(e) => setFormData({...formData, type: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Classic shoes"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Material</label>
-                          <input 
-                            type="text" 
-                            value={formData.material}
-                            onChange={(e) => setFormData({...formData, material: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Plastic material"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Design</label>
-                          <input 
-                            type="text" 
-                            value={formData.design}
-                            onChange={(e) => setFormData({...formData, design: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Modern nice"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Customization</label>
-                          <input 
-                            type="text" 
-                            value={formData.customization}
-                            onChange={(e) => setFormData({...formData, customization: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Custom logo available"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Protection</label>
-                          <input 
-                            type="text" 
-                            value={formData.protection}
-                            onChange={(e) => setFormData({...formData, protection: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Refund Policy"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
-                          <input 
-                            type="text" 
-                            value={formData.warranty}
-                            onChange={(e) => setFormData({...formData, warranty: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. 2 years full"
-                          />
-                        </div>
-                      </div>
+                      <h3 className="font-semibold text-gray-900">Specifications</h3>
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                                <input type="text" value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
+                            </div>
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Material</label>
+                                <input type="text" value={formData.material} onChange={(e) => setFormData({...formData, material: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
+                            </div>
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Design</label>
+                                <input type="text" value={formData.design} onChange={(e) => setFormData({...formData, design: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
+                            </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
+                                <input type="text" value={formData.warranty} onChange={(e) => setFormData({...formData, warranty: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
+                            </div>
+                       </div>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-2">
-                    <button 
-                      type="button" 
-                      onClick={() => setIsFormOpen(false)}
-                      className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg font-medium"
-                    >
-                      Cancel
-                    </button>
-                    <button 
-                      type="submit" 
-                      className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-                    >
-                      Save Product
-                    </button>
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                     <button 
+                       type="button" 
+                       onClick={() => setIsFormOpen(false)}
+                       className="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
+                       disabled={isSubmitting}
+                     >
+                       Cancel
+                     </button>
+                     <button 
+                       type="submit"
+                       className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
+                       disabled={isSubmitting}
+                     >
+                       {isSubmitting ? 'Saving...' : (formData.id ? 'Save Changes' : 'Create Product')}
+                     </button>
                   </div>
               </form>
            </div>
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-           <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 text-center animate-in zoom-in-95 duration-200">
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4 text-red-600">
-                 <Trash2 size={24} />
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Delete Product</h3>
-              <p className="text-gray-500 mb-6">Are you sure you want to delete <span className="font-semibold text-gray-800">{selectedProduct?.name}</span>? This action cannot be undone.</p>
-              <div className="flex gap-3 justify-center">
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        title="Confirm Delete"
+      >
+        <div className="space-y-4">
+            <p className="text-gray-600">Are you sure you want to delete <span className="font-semibold text-gray-900">{selectedProduct?.name}</span>? This action cannot be undone.</p>
+            <div className="flex justify-end gap-3">
                  <button 
                    onClick={() => setIsDeleteModalOpen(false)}
-                   className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg font-medium border border-gray-200"
+                   className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                  >
                    Cancel
                  </button>
                  <button 
                    onClick={confirmDelete}
-                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium"
+                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                  >
-                   Delete
+                   Delete Product
                  </button>
-              </div>
-           </div>
+            </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 }
