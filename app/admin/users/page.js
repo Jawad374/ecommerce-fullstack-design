@@ -1,24 +1,48 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, Filter, Shield, User as UserIcon } from 'lucide-react';
 
 export default function UsersPage() {
-  // Dummy Data
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin', status: 'Active', joined: '2023-10-15' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'user', status: 'Active', joined: '2023-11-20' },
-    { id: 3, name: 'Mike Wilson', email: 'mike@example.com', role: 'user', status: 'Inactive', joined: '2023-12-05' },
-    { id: 4, name: 'Sarah Brown', email: 'sarah@example.com', role: 'editor', status: 'Active', joined: '2024-01-12' },
-    { id: 5, name: 'David Lee', email: 'david@example.com', role: 'user', status: 'Active', joined: '2024-02-01' },
-  ]);
-
+  const [users, setUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
 
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      if (response.ok) {
+        const data = await response.json();
+        // Transform data if necessary to match table structure or use directly
+        // The API returns MongoDB documents: _id, name, email, role, createdAt etc.
+        const formattedUsers = data.map(u => ({
+            id: u._id,
+            name: u.name,
+            email: u.email,
+            role: u.role || 'user', // Default to user if not specified
+            status: 'Active', // We don't have status in User model yet, assuming active
+            joined: new Date(u.createdAt).toLocaleDateString()
+        }));
+        setUsers(formattedUsers);
+      }
+    } catch (error) {
+      console.error("Failed to fetch users", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleDelete = (id) => {
+    // In a real app, you would call DELETE /api/users/[id] here
     setUsers(users.filter(user => user.id !== id));
     setDeleteId(null);
   };
+
+  if (isLoading) return <div className="p-8 text-center text-gray-500">Loading users...</div>;
 
   return (
     <div>
@@ -105,15 +129,23 @@ export default function UsersPage() {
                   <td className="px-6 py-4 text-sm text-gray-500">{user.joined}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                        <Edit2 size={18} />
-                      </button>
-                      <button 
-                        onClick={() => handleDelete(user.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                       {/* Disable actions for admin users to prevent cleanup mistakes */}
+                       {user.role !== 'admin' && (
+                         <>
+                            <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                <Edit2 size={18} />
+                            </button>
+                            <button 
+                                onClick={() => handleDelete(user.id)}
+                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                         </>
+                       )}
+                       {user.role === 'admin' && (
+                          <span className="text-xs text-gray-400 italic">Protected</span>
+                       )}
                     </div>
                   </td>
                 </tr>
