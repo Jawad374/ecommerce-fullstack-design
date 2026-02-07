@@ -107,7 +107,7 @@
 
 ## 👥 Contributors
 
-- **Your Name** - *Initial Work* - [YourGitHub](https://github.com/jawad374)
+- **Muhammad Jawad Anjum** - [Jawad374](https://github.com/jawad374)
 
 ---
 
