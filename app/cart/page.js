@@ -9,9 +9,10 @@ import SavedForLaterCart from '@/components/cart/SavedForLaterCart';
 import PromoBanner from '@/components/common/PromoBanner';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
+import YouMayLike from '@/components/product-detail/YouMayLike'; // Import YouMayLike
 
 // 1. Import the new Mobile Cart component
-import MobileCart from '@/components/cart/MobileCart'; 
+import MobileCart from '@/components/cart/MobileCart';  
 
 export default function CartPage() {
   const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
@@ -109,12 +110,9 @@ export default function CartPage() {
           {/* Info Cards */}
           <CartInfoCards />
 
-          {/* Saved For Later */}
-          <SavedForLaterCart />
-
-          {/* Promo Banner */}
-          <div className="mt-12">
-            <PromoBanner />
+          {/* You May Like - Display below Cart Items or separately */}
+          <div className="mt-8">
+              <YouMayLike variant="horizontal" />
           </div>
         </div>
 

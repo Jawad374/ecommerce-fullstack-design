@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 
 export default function FilterSidebar() {
-  const { filters, setFilters } = useCart();
+  const { filters, setFilters, uniqueCategories, uniqueBrands } = useCart();
   const [localPriceMin, setLocalPriceMin] = useState(filters.minPrice);
   const [localPriceMax, setLocalPriceMax] = useState(filters.maxPrice);
 
-  const categories = ['Mobile accessory', 'Electronics', 'Smartphones', 'Modern tech', 'Clothings'];
-  const brands = ['Samsung', 'Apple', 'Huawei', 'Lenovo'];
-  const features = ['Metallic', 'Plastic cover', '8GB Ram', 'Super power', 'Large Memory'];
+  const categories = uniqueCategories || [];
+  const brands = uniqueBrands || [];
 
   const toggleFilter = (type, value) => {
     setFilters(prev => {
@@ -71,25 +70,6 @@ export default function FilterSidebar() {
                 onChange={() => toggleFilter('brands', brand)}
               />
               <span className="text-[15px]">{brand}</span>
-            </label>
-          ))}
-          <p className="text-blue-500 cursor-pointer text-[15px] pt-1">See all</p>
-        </div>
-      </section>
-
-      <hr className="border-gray-200 mb-5" />
-
-      {/* Features Section */}
-      <section className="mb-5">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-base font-semibold text-[#1C1C1C]">Features</h3>
-          <ChevronUpIcon />
-        </div>
-        <div className="space-y-3">
-          {features.map(feat => (
-            <label key={feat} className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="w-4.5 h-4.5 rounded border-gray-300 text-blue-600 focus:ring-0" />
-              <span className="text-[15px]">{feat}</span>
             </label>
           ))}
           <p className="text-blue-500 cursor-pointer text-[15px] pt-1">See all</p>

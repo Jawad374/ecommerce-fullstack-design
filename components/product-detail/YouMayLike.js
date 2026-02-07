@@ -1,18 +1,45 @@
-export default function YouMayLike() {
-  const products = [
-    { name: 'Men Blazers Sets Elegant Formal', price: '$7.00 - $99.50', image: '/path-to-blazer.png' },
-    { name: 'Men Shirt Sleeve Polo Contrast', price: '$7.00 - $99.50', image: '/path-to-polo.png' },
-    { name: 'Apple Watch Series Space Gray', price: '$7.00 - $99.50', image: '/path-to-watch.png' },
-    { name: 'Basketball Crew Socks Long Stuff', price: '$7.00 - $99.50', image: '/path-to-socks.png' },
-    { name: "New Summer Men's castrol T-Shirts", price: '$7.00 - $99.50', image: '/path-to-tshirt.png' }
-  ];
+'use client';
+
+import { useState, useEffect } from 'react';
+
+export default function YouMayLike({ currentProductId, variant = 'vertical' }) {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch 5 random products or related logic from API or pass from parent
+    // For now, let's fetch all and pick simple ones, or use an API endpoint for recommendations
+    const fetchRecommendations = async () => {
+        try {
+            const res = await fetch('/api/products');
+            if (res.ok) {
+                const allProducts = await res.json();
+                // Filter out current product and pick 5 random
+                const others = allProducts.filter(p => p._id !== currentProductId);
+                const randomFive = others.sort(() => 0.5 - Math.random()).slice(0, 5);
+                setProducts(randomFive.map(p => ({
+                    id: p._id,
+                    name: p.name,
+                    price: `$${p.price}`,
+                    image: p.images?.[0] || 'https://placehold.co/200x200?text=No+Image'
+                })));
+            }
+        } catch (error) {
+            console.error("Failed to load recommendations", error);
+        }
+    };
+    fetchRecommendations();
+  }, [currentProductId]);
+
+  if (products.length === 0) return null;
+
+  const isVertical = variant === 'vertical';
 
   return (
-    <div className="bg-white border border-[#e3e8ee] rounded-md p-4 max-w-70">
+    <div className={`bg-white border border-[#e3e8ee] rounded-md p-4 ${isVertical ? 'max-w-70' : 'w-full'}`}>
       <h3 className="text-[16px] font-semibold text-[#1c1c1c] mb-4">You may like</h3>
-      <div className="space-y-4">
+      <div className={isVertical ? "space-y-4" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"}>
         {products.map((product, index) => (
-          <div key={index} className="flex gap-3 group cursor-pointer">
+          <div key={index} className={`flex gap-3 group cursor-pointer ${!isVertical ? 'bg-white border border-transparent hover:border-gray-200 rounded-lg p-2 transition-colors' : ''}`}>
             {/* Image Container with specific border color */}
             <div className="w-20 h-20 border border-[#e3e8ee] rounded-md flex items-center justify-center p-2 shrink-0">
               <img 

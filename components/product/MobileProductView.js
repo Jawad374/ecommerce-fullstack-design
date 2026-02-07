@@ -13,8 +13,19 @@ import Footer from '@/components/layout/Footer';
 
 export default function MobileProductView() {
   const [viewMode, setViewMode] = useState('list');
-  const { filteredProducts, searchQuery, setSearchQuery, cartItems } = useCart();
+  const { filteredProducts, searchQuery, setSearchQuery, cartItems, uniqueCategories, filters, setFilters } = useCart();
   const router = useRouter();
+  
+  const toggleCategory = (cat) => {
+    setFilters(prev => {
+        const current = prev.categories || [];
+        const isSelected = current.includes(cat);
+        const updated = isSelected
+           ? current.filter(c => c !== cat)
+           : [...current, cat];
+        return { ...prev, categories: updated };
+    });
+  };
 
   return (
     <div className="bg-white min-h-screen font-sans pb-20 flex flex-col">
@@ -57,11 +68,20 @@ export default function MobileProductView() {
 
       {/* --- Horizontal Categories --- */}
       <div className="flex gap-2 overflow-x-auto px-4 py-3 no-scrollbar">
-        {['Tablets', 'Phones', 'Ipads', 'Ipod', 'Accessories'].map((cat) => (
-          <button key={cat} className="px-4 py-1.5 bg-[#E5F1FF] text-[#0D6EFD] rounded-lg text-sm whitespace-nowrap">
-            {cat}
-          </button>
-        ))}
+        {(uniqueCategories?.length > 0 ? uniqueCategories : ['Tablets', 'Phones', 'Ipads', 'Ipod', 'Accessories']).map((cat) => {
+          const isSelected = filters.categories.includes(cat);
+          return (
+            <button 
+              key={cat} 
+              onClick={() => toggleCategory(cat)}
+              className={`px-4 py-1.5 rounded-lg text-sm whitespace-nowrap transition-colors ${
+                isSelected ? 'bg-[#0D6EFD] text-white' : 'bg-[#E5F1FF] text-[#0D6EFD]'
+              }`}
+            >
+              {cat}
+            </button>
+          );
+        })}
       </div>
 
       {/* --- Sort/Filter/View Switcher --- */}

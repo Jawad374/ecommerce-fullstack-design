@@ -126,12 +126,12 @@ export default function ProductDetailPage() {
 
             {/* Right Column: Sidebar */}
             <div className="flex-1 w-full lg:max-w-70">
-              <YouMayLike />
+              <YouMayLike currentProductId={product.id} />
             </div>
           </div>
 
           {/* Related Products */}
-          <RelatedProducts />
+          <RelatedProducts category={product.category} currentProductId={product.id} />
 
           {/* Promo Banner */}
           <PromoBanner />

@@ -40,28 +40,46 @@ export async function POST(request) {
     const protection = formData.get('protection');
     const warranty = formData.get('warranty');
     
-    // Handle image upload
-    const file = formData.get('image');
-    let imageUrl = '';
+    // Handle image upload (multiple)
+    const files = formData.getAll('newImages'); // Get all new files
+    // If client sends 'image' instead of 'newImages' (backward compatibility or singular upload), handle it
+    const legacyFile = formData.get('image');
+    if (legacyFile) files.push(legacyFile);
 
-    if (file && file instanceof File) {
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+    const imageUrls = [];
 
-      // Upload to Cloudinary using a stream
-      const uploadResult = await new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: 'ecommerce-products' },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        uploadStream.end(buffer);
+    if (files && files.length > 0) {
+      const uploadPromises = files.map(async (file) => {
+        if (file instanceof File) {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            
+            return new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { folder: 'ecommerce-products' },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result.secure_url);
+                    }
+                );
+                uploadStream.end(buffer);
+            });
+        }
+        return null;
       });
 
-      imageUrl = uploadResult.secure_url;
+      const results = await Promise.all(uploadPromises);
+      imageUrls.push(...results.filter(url => url !== null));
     }
+
+    // Also check for existing images if any (though typically POST is for new creation, so maybe not relevant, but let's be safe)
+    // Actually, in POST (create), we don't have existing images usually. But if we supported cloning...
+    // The frontend only sends 'existingImages' we might want to include them.
+    const existingImages = formData.getAll('existingImages');
+    if (existingImages && existingImages.length > 0) {
+        imageUrls.push(...existingImages);
+    }
+
 
     const product = await Product.create({
       name,
@@ -71,7 +89,7 @@ export async function POST(request) {
       category,
       stock: parseInt(stock) || 0,
       brand,
-      images: imageUrl ? [imageUrl] : [],
+      images: imageUrls,
       type,
       material,
       design,

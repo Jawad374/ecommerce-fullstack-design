@@ -5,6 +5,7 @@ import { Plus, Edit2, Trash2, Search, Filter, Upload } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 
 export default function ProductsPage() {
+  // Products management page
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [formData, setFormData] = useState({ 
@@ -24,9 +25,10 @@ export default function ProductsPage() {
     customization: '',
     protection: '',
     warranty: '',
-    image: null
+    existingImages: [],
+    newImages: []
   });
-  const [imagePreview, setImagePreview] = useState(null);
+  const [newImagePreviews, setNewImagePreviews] = useState([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -58,9 +60,10 @@ export default function ProductsPage() {
   const handleEdit = (product) => {
     setFormData({
       ...product,
-      image: null // We don't load the file object back
+      existingImages: product.images || [],
+      newImages: []
     });
-    setImagePreview(product.images?.[0] || null);
+    setNewImagePreviews([]);
     setIsFormOpen(true);
   };
 
@@ -77,11 +80,31 @@ export default function ProductsPage() {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData({ ...formData, image: file });
-      setImagePreview(URL.createObjectURL(file));
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        newImages: [...prev.newImages, ...files]
+      }));
+      
+      const newPreviews = files.map(file => URL.createObjectURL(file));
+      setNewImagePreviews(prev => [...prev, ...newPreviews]);
     }
+  };
+
+  const removeExistingImage = (indexToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      existingImages: prev.existingImages.filter((_, index) => index !== indexToRemove)
+    }));
+  };
+
+  const removeNewImage = (indexToRemove) => {
+    setFormData(prev => ({
+      ...prev,
+      newImages: prev.newImages.filter((_, index) => index !== indexToRemove)
+    }));
+    setNewImagePreviews(prev => prev.filter((_, index) => index !== indexToRemove));
   };
 
   const handleSave = async (e) => {
@@ -105,17 +128,19 @@ export default function ProductsPage() {
       if (formData.protection) data.append('protection', formData.protection);
       if (formData.warranty) data.append('warranty', formData.warranty);
       
-      if (formData.image) {
-        data.append('image', formData.image);
-      }
+      // Append existing images
+      formData.existingImages.forEach(img => data.append('existingImages', img));
 
-      // Note: We only implemented POST in the API route for now. 
-      // If editing is needed, we need to update the API route to handle PUT/PATCH.
-      // But creating a new product generates a new ID.
-      // For this task, we focus on posting (creating) as requested.
+      // Append new images
+      formData.newImages.forEach(file => {
+        data.append('newImages', file);
+      });
+
+      const url = formData.id ? `/api/products/${formData.id}` : '/api/products';
+      const method = formData.id ? 'PUT' : 'POST';
       
-      const res = await fetch('/api/products', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method: method,
         body: data,
       });
 
@@ -151,9 +176,10 @@ export default function ProductsPage() {
       customization: '',
       protection: '',
       warranty: '',
-      image: null
+      existingImages: [],
+      newImages: []
     });
-    setImagePreview(null);
+    setNewImagePreviews([]);
   };
 
   if (isLoading) return <div className="p-8 text-center">Loading products...</div>;
@@ -319,17 +345,40 @@ export default function ProductsPage() {
                         </div>
                          {/* Image Upload */}
                          <div className="md:col-span-2">
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Product Image</label>
-                             <div className="flex items-center gap-4">
-                                 {imagePreview && (
-                                     <div className="w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200">
-                                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                             <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
+                             <div className="flex flex-wrap items-center gap-4">
+                                 {/* Existing Images */}
+                                 {formData.existingImages.map((img, index) => (
+                                     <div key={`existing-${index}`} className="relative w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 group">
+                                         <img src={img} alt="Existing" className="w-full h-full object-cover" />
+                                         <button
+                                           type="button"
+                                           onClick={() => removeExistingImage(index)}
+                                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                         >
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                         </button>
                                      </div>
-                                 )}
-                                 <label className="cursor-pointer flex items-center gap-2 bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                                     <Upload size={18} />
-                                     Upload Image
-                                     <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                                 ))}
+
+                                 {/* New Images Previews */}
+                                 {newImagePreviews.map((preview, index) => (
+                                     <div key={`new-${index}`} className="relative w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 group">
+                                         <img src={preview} alt="New Preview" className="w-full h-full object-cover" />
+                                         <button
+                                           type="button"
+                                           onClick={() => removeNewImage(index)}
+                                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                         >
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                         </button>
+                                     </div>
+                                 ))}
+
+                                 <label className="cursor-pointer flex flex-col items-center justify-center w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50 transition-colors">
+                                     <Upload size={18} className="text-gray-400" />
+                                     <span className="text-[10px] text-gray-500 mt-1">Add</span>
+                                     <input type="file" className="hidden" accept="image/*" multiple onChange={handleImageChange} />
                                  </label>
                              </div>
                          </div>

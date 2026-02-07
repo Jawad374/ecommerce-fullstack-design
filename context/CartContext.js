@@ -80,10 +80,13 @@ export function CartProvider({ children }) {
     const matchesPrice = product.price >= parseFloat(filters.minPrice) && product.price <= parseFloat(filters.maxPrice);
     const matchesCategory = filters.categories.length === 0 || filters.categories.includes(product.category);
     const matchesBrand = filters.brands.length === 0 || filters.brands.includes(product.brand);
-    // const matchesFeature = filters.features.length === 0 || filters.features.some(f => product.features.includes(f));
     
     return matchesSearch && matchesPrice && matchesCategory && matchesBrand;
   });
+
+  // Derived filters from unique product data
+  const uniqueCategories = [...new Set(products.map(p => p.category).filter(Boolean))];
+  const uniqueBrands = [...new Set(products.map(p => p.brand).filter(Boolean))];
 
   return (
     <CartContext.Provider value={{
@@ -97,7 +100,9 @@ export function CartProvider({ children }) {
       searchQuery,
       setSearchQuery,
       filters,
-      setFilters
+      setFilters,
+      uniqueCategories,
+      uniqueBrands
     }}>
       {children}
     </CartContext.Provider>
