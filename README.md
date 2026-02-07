@@ -1,6 +1,6 @@
 # 🛍️ Modern Full-Stack eCommerce Platform
 
-![Project Banner](https://via.placeholder.com/1200x400/0D6EFD/ffffff?text=E-Commerce+Solution)
+![Project Banner](https://res.cloudinary.com/doeykzpxv/image/upload/v1770474452/ecommerce-products/lszqeajxrweskvzq7szh.png)
 
 > A robust, responsive, and feature-rich eCommerce web application built with **Next.js**, **Node.js**, and **MongoDB**. Designed to provide a seamless shopping experience across all devices.
 
