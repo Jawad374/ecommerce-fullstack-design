@@ -6,6 +6,7 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
   const [products, setProducts] = useState([]);
@@ -16,6 +17,26 @@ export function CartProvider({ children }) {
     brands: [],
     features: []
   });
+
+  // Load cart from localStorage
+  useEffect(() => {
+    const savedCart = localStorage.getItem('cartItems');
+    if (savedCart) {
+      try {
+        setCartItems(JSON.parse(savedCart));
+      } catch (e) {
+        console.error('Failed to parse cart items', e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save cart to localStorage
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+  }, [cartItems, isLoaded]);
 
   // Mock Data for fallback
   const mockProducts = [

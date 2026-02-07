@@ -2,9 +2,10 @@ import React from 'react';
 import { useCart } from '@/context/CartContext';
 import { ArrowLeft, MoreVertical, Minus, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function MobileCart() {
-  const { cartItems, updateQuantity, removeFromCart } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, products } = useCart();
   const router = useRouter();
 
   const savedItems = [
@@ -116,40 +117,40 @@ export default function MobileCart() {
             <span>${total.toFixed(2)}</span>
          </div>
          
-         <button className="w-full bg-[#00B517] text-white py-3.5 rounded-lg font-bold text-base shadow-lg shadow-green-200 mt-2 active:scale-[0.98] transition-transform">
+         <button 
+            onClick={() => {
+                alert('Checkout functionality coming soon (requires payment gateway integration)');
+            }}
+            className="w-full bg-[#00B517] text-white py-3.5 rounded-lg font-bold text-base shadow-lg shadow-green-200 mt-2 active:scale-[0.98] transition-transform"
+         >
             Checkout
          </button>
       </div>
 
-      {/* 4. Saved for Later */}
+      {/* 4. You May Also Like */}
       <div className="px-4 py-2">
-          <h3 className="font-bold text-gray-900 text-lg mb-4">Saved for later</h3>
+          <h3 className="font-bold text-gray-900 text-lg mb-4">You may also like</h3>
           
-          <div className="space-y-4">
-              {savedItems.map((item) => (
-                  <div key={item.id} className="bg-white rounded-lg border border-gray-200 p-3 flex gap-3 shadow-sm">
+          <div className="grid grid-cols-2 gap-3">
+              {products.slice(0, 4).map((item) => (
+                  <Link href={`/product/${item.id}`} key={item.id} className="bg-white rounded-lg border border-gray-200 p-3 flex flex-col shadow-sm">
                       {/* Image */}
-                      <div className="w-24 h-24 bg-gray-50 rounded-md border border-gray-100 shrink-0 p-2">
-                          <img src={item.img} className="w-full h-full object-contain mix-blend-multiply" alt={item.name} />
+                      <div className="w-full h-32 bg-gray-50 rounded-md border border-gray-100 mb-2 p-2 flex items-center justify-center">
+                          <img src={item.image} className="max-w-full max-h-full object-contain mix-blend-multiply" alt={item.name} />
                       </div>
                       
                       {/* Content */}
-                      <div className="flex-1 flex flex-col justify-between py-1">
+                      <div className="flex-1 flex flex-col justify-between">
                           <div>
-                            <h4 className="text-sm font-medium text-gray-900 line-clamp-2">{item.name}</h4>
-                            <p className="font-bold text-gray-900 mt-1">{item.price}</p>
+                            <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">{item.name}</h4>
+                            <p className="font-bold text-gray-900">${item.price}</p>
                           </div>
                           
-                          <div className="flex gap-3 mt-2">
-                              <button className="px-3 py-1.5 border border-gray-200 rounded text-blue-600 text-xs font-medium bg-white shadow-sm active:bg-gray-50">
-                                  Move to cart
-                              </button>
-                              <button className="px-3 py-1.5 border border-gray-200 rounded text-red-500 text-xs font-medium bg-white shadow-sm active:bg-gray-50">
-                                  Remove
-                              </button>
-                          </div>
+                          <button className="mt-2 w-full py-1.5 border border-blue-600 rounded text-blue-600 text-xs font-medium bg-white active:bg-blue-50">
+                              View Details
+                          </button>
                       </div>
-                  </div>
+                  </Link>
               ))}
           </div>
       </div>

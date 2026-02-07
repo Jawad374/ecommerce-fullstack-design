@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -20,8 +20,25 @@ import { useRouter } from 'next/navigation';
 export default function AdminLayout({ children }) {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const pathname = usePathname();
-  const { logout, user } = useUser();
+  const { logout, user, loading } = useUser();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'admin') {
+        router.push('/login'); // Redirect to login if not admin
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div className="min-h-screen flex items-center justify-center bg-gray-50">Loading...</div>;
+  }
+
+  // If not logged in (and effect hasn't redirected yet), don't show content
+  if (!user || user.role !== 'admin') {
+     return null; 
+  }
 
   const menuItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },

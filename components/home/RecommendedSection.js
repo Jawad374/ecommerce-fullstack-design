@@ -6,7 +6,7 @@ export default function RecommendedSection() {
   const { products } = useCart();
   
   // Use context products, fallback to empty array if loading/undefined
-  const recommendedProducts = products || [];
+  const recommendedProducts = products ? products.slice(0, 10) : [];
 
   const services = [
     { title: 'Source from Industry Hubs', image: '/Image/others/step1.png', iconImage: '/icons/1.png' },

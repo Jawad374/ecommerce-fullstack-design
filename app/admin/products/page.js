@@ -72,11 +72,27 @@ export default function ProductsPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const confirmDelete = () => {
-    // Implement delete API call here if needed
-    setProducts(products.filter(p => p.id !== selectedProduct.id));
-    setIsDeleteModalOpen(false);
-    setSelectedProduct(null);
+  const confirmDelete = async () => {
+    if (!selectedProduct) return;
+    
+    try {
+      const response = await fetch(`/api/products/${selectedProduct.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setProducts(products.filter(p => p.id !== selectedProduct.id));
+      } else {
+        console.error('Failed to delete product');
+        alert('Failed to delete product. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('An error occurred while deleting the product.');
+    } finally {
+      setIsDeleteModalOpen(false);
+      setSelectedProduct(null);
+    }
   };
 
   const handleImageChange = (e) => {

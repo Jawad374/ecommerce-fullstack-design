@@ -7,8 +7,27 @@ import { useRouter } from 'next/navigation';
 export default function MobileProductDetail({ product }) {
   const { addToCart, cartItems } = useCart();
   const router = useRouter();
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
 
   if (!product) return null;
+
+  // Handle images logic similar to Desktop version
+  let images = [];
+  if (product.images && product.images.length > 0) {
+    images = product.images;
+  } else if (product.image) {
+    images = [product.image];
+  } else {
+    images = ['https://placehold.co/500x500?text=No+Image'];
+  }
+
+  const handleNext = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
 
   return (
     <div className="bg-gray-50 min-h-screen pb-8 font-sans">
@@ -36,24 +55,36 @@ export default function MobileProductDetail({ product }) {
       {/* --- Product Image Area --- */}
       <div className="bg-white border-b border-gray-200 relative">
         <div className="aspect-square relative w-full max-h-95 flex items-center justify-center bg-white">
-            {/* Main Image Placeholder */}
+            {/* Main Image */}
             <div className="w-3/4 h-3/4 relative">
               <img 
-                src={product.images && product.images.length > 0 ? product.images[0] : (product.image || 'https://placehold.co/500x500?text=No+Image')} 
+                src={images[currentImageIndex]} 
                 alt={product.name} 
-                className="w-full h-full object-contain mix-blend-multiply"
+                className="w-full h-full object-contain mix-blend-multiply transition-opacity duration-300"
               />
             </div>
             
-            {/* Floating Carousel Controls (as seen in image) */}
+            {/* Image Counter (Optional but helpful) */}
+            {images.length > 1 && (
+               <div className="absolute bottom-6 left-6 bg-gray-100 rounded-full px-2 py-1 text-xs text-gray-500">
+                  {currentImageIndex + 1} / {images.length}
+               </div>
+            )}
+
+            {/* Floating Carousel Controls */}
+            {images.length > 1 && (
             <div className="absolute bottom-6 right-6 flex gap-1">
-               {/* This simulates the grey pill shape control often seen in these UIs */}
                <div className="bg-gray-400/30 backdrop-blur-sm rounded-full p-1.5 flex gap-2 px-3">
-                  <ArrowLeft className="w-4 h-4 text-gray-600" />
+                  <button onClick={handlePrev} className="active:scale-90 transition-transform">
+                      <ArrowLeft className="w-4 h-4 text-gray-700" />
+                  </button>
                   <div className="w-px h-4 bg-gray-400/50"></div>
-                  <ChevronRight className="w-4 h-4 text-gray-600" />
+                  <button onClick={handleNext} className="active:scale-90 transition-transform">
+                      <ChevronRight className="w-4 h-4 text-gray-700" />
+                  </button>
                </div>
             </div>
+            )}
         </div>
       </div>
 
@@ -99,7 +130,7 @@ export default function MobileProductDetail({ product }) {
           </button>
         </div>
 
-        {/* Specs Table - Exact Grid Match */}
+        {/* Specs Table - Dynamic */}
         <div className="space-y-3 text-sm text-gray-600 font-normal">
           <div className="grid grid-cols-[100px_1fr]">
             <span className="text-gray-400">Condition</span>
@@ -107,22 +138,28 @@ export default function MobileProductDetail({ product }) {
           </div>
           <div className="grid grid-cols-[100px_1fr]">
             <span className="text-gray-400">Material</span>
-            <span className="text-gray-700">Plastic</span>
+            <span className="text-gray-700">{product.material || 'N/A'}</span>
           </div>
           <div className="grid grid-cols-[100px_1fr]">
             <span className="text-gray-400">Category</span>
-            <span className="text-gray-700">Electronics, gadgets</span>
+            <span className="text-gray-700">{product.category || 'General'}</span>
           </div>
           <div className="grid grid-cols-[100px_1fr]">
-            <span className="text-gray-400">Item num</span>
-            <span className="text-gray-700">23421</span>
+            <span className="text-gray-400">Brand</span>
+            <span className="text-gray-700">{product.brand || 'Generic'}</span>
           </div>
         </div>
 
         {/* Description Snippet */}
         <div className="mt-4 text-sm text-gray-500 leading-relaxed">
-          Info about edu item is an ideal companion for anyone engaged in learning. The drone provides precise and ...
-          <button className="text-blue-600 font-medium ml-1">Read more</button>
+          {product.description?.length > 150 ? (
+             <>
+               {product.description.slice(0, 150)}...
+               <button className="text-blue-600 font-medium ml-1">Read more</button>
+             </>
+          ) : (
+            product.description
+          )}
         </div>
       </div>
 
@@ -132,11 +169,11 @@ export default function MobileProductDetail({ product }) {
           <div className="flex gap-3">
             {/* Avatar R */}
             <div className="w-11 h-11 bg-teal-100/80 text-teal-700 font-bold rounded flex items-center justify-center text-xl shrink-0">
-              R
+              {product.brand ? product.brand.charAt(0).toUpperCase() : 'S'}
             </div>
             <div className="flex flex-col justify-center">
               <span className="text-gray-400 text-xs mb-0.5">Supplier</span>
-              <span className="text-gray-900 font-medium text-base">Guanjoi Trading LLC</span>
+              <span className="text-gray-900 font-medium text-base">{product.brand || 'Verified Seller'}</span>
             </div>
           </div>
           <ChevronRight className="text-gray-400 w-5 h-5 mt-2" />
@@ -170,40 +207,33 @@ export default function MobileProductDetail({ product }) {
         
         <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide -mx-4 px-4">
             
-            {/* Card 1 */}
-             <div className="min-w-36.25 max-w-36.25 bg-white rounded-lg border border-gray-200 p-2.5 flex flex-col">
-                <div className="h-28 bg-gray-100 rounded-md mb-2 overflow-hidden relative">
-                    <img src="https://via.placeholder.com/150/4B5563/FFFFFF?text=Shirt" alt="" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
-                </div>
-                <div className="text-sm font-bold text-gray-900 mb-1">$10.30</div>
-                <div className="text-xs text-gray-500 leading-tight">
-                    T-shirts with multiple colors, for men
-                </div>
-            </div>
+             <MobileSimilarProducts currentId={product.id} category={product.category} />
 
-            {/* Card 2 */}
-            <div className="min-w-36.25 max-w-36.25 bg-white rounded-lg border border-gray-200 p-2.5 flex flex-col">
-                <div className="h-28 bg-gray-100 rounded-md mb-2 overflow-hidden relative">
-                    <img src="https://via.placeholder.com/150/92400E/FFFFFF?text=Jacket" alt="" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
-                </div>
-                <div className="text-sm font-bold text-gray-900 mb-1">$10.30</div>
-                <div className="text-xs text-gray-500 leading-tight">
-                    Winter jacket for men, brown color
-                </div>
-            </div>
-
-             {/* Card 3 */}
-             <div className="min-w-36.25 max-w-36.25 bg-white rounded-lg border border-gray-200 p-2.5 flex flex-col">
-                <div className="h-28 bg-gray-100 rounded-md mb-2 overflow-hidden relative">
-                    <img src="https://via.placeholder.com/150/1E40AF/FFFFFF?text=Jeans" alt="" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
-                </div>
-                <div className="text-sm font-bold text-gray-900 mb-1">$12.50</div>
-                <div className="text-xs text-gray-500 leading-tight">
-                    Jeans shorts for men blue color
-                </div>
-            </div>
         </div>
       </div>
     </div>
   );
+}
+
+// Subcomponent for similar products to keep main clean
+function MobileSimilarProducts({ currentId, category }) {
+  const { products } = useCart();
+  // Filter products by category and exclude current
+  const similar = products
+    .filter(p => p.category === category && p.id !== currentId)
+    .slice(0, 5);
+
+  if (similar.length === 0) return <div className="text-sm text-gray-400">No similar products found</div>;
+
+  return similar.map(item => (
+     <Link href={`/product/${item.id}`} key={item.id} className="min-w-36.25 max-w-36.25 bg-white rounded-lg border border-gray-200 p-2.5 flex flex-col">
+        <div className="h-28 bg-gray-100 rounded-md mb-2 overflow-hidden relative">
+            <img src={item.image} alt={item.name} className="w-full h-full object-contain mix-blend-multiply opacity-80" />
+        </div>
+        <div className="text-sm font-bold text-gray-900 mb-1">${item.price}</div>
+        <div className="text-xs text-gray-500 leading-tight line-clamp-2">
+            {item.name}
+        </div>
+    </Link>
+  ));
 }

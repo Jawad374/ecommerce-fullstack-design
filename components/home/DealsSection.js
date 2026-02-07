@@ -1,14 +1,26 @@
 'use client';
 import Link from 'next/link';
+import { useCart } from '@/context/CartContext';
 
 export default function DealsSection() {
-  const deals = [
+  const { products } = useCart();
+
+  const staticDeals = [
     { name: 'Smart watches', discount: '-25%', image: '/Image/tech/1.jpg' },
     { name: 'Laptops', discount: '-15%', image: '/Image/tech/7.jpg' },
     { name: 'GoPro cameras', discount: '-40%', image: '/Image/tech/6.jpg' },
     { name: 'Headphones', discount: '-25%', image: '/Image/tech/5.jpg' },
     { name: 'Canon camreras', discount: '-25%', image: '/Image/tech/6.jpg' },
   ];
+
+  // Logic to find deals from dynamic products (product with oldPrice > price)
+  const dynamicDeals = products.filter(p => p.oldPrice && p.oldPrice > p.price).slice(0, 5).map(p => ({
+    name: p.name,
+    discount: `-${Math.round(((p.oldPrice - p.price) / p.oldPrice) * 100)}%`,
+    image: p.image || '/Image/tech/1.jpg'
+  }));
+
+  const deals = dynamicDeals.length > 0 ? dynamicDeals : staticDeals;
 
   return (
     <div className="bg-gray-100 py-3 md:pt-4">

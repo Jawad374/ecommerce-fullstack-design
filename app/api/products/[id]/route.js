@@ -119,3 +119,25 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
+
+export async function DELETE(request, { params }) {
+  try {
+    await connectDB();
+    const { id } = await params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: 'Invalid product ID' }, { status: 400 });
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
