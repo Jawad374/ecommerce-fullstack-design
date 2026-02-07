@@ -4,6 +4,8 @@
 
 > A robust, responsive, and feature-rich eCommerce web application built with **Next.js**, **Node.js**, and **MongoDB**. Designed to provide a seamless shopping experience across all devices.
 
+[**🌐 Live Demo**](https://ecommerce-fullstack-design-chi.vercel.app/)
+
 [![Next.js](https://img.shields.io/badge/Next.js-13+-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-Database-green?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
@@ -44,15 +46,6 @@
 
 ---
 
-## 📸 Screenshots
-
-| Desktop View | Mobile View |
-|:---:|:---:|
-| <img src="https://via.placeholder.com/400x250/eee/333?text=Desktop+Home" width="400" /> | <img src="https://via.placeholder.com/150x250/eee/333?text=Mobile+App" width="150" /> |
-| **Product Grid** | **Mobile Details** |
-| <img src="https://via.placeholder.com/400x250/eee/333?text=Product+Grid" width="400" /> | <img src="https://via.placeholder.com/150x250/eee/333?text=Touch+Gallery" width="150" /> |
-
----
 
 ## ⚡ Getting Started
 
@@ -114,12 +107,8 @@
 
 ## 👥 Contributors
 
-- **Your Name** - *Initial Work* - [YourGitHub](https://github.com/yourusername)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **Your Name** - *Initial Work* - [YourGitHub](https://github.com/jawad374)
 
 ---
 
-<center> Made with ❤️ by [Your Name] </center>
+<center> Made with ❤️ by Muhammad Jawad Anjum </center>
