@@ -8,7 +8,7 @@
 > **A professional, scalable, and fully responsive eCommerce solution built for the modern web.**  
 > Featuring a separate tailored mobile experience, comprehensive admin dashboard, and robust inventory management.
 
-[**🚀 Live Verification Demo**](https://ecommerce-fullstack-design-chi.vercel.app/) · [**🐛 Report Bug**](https://github.com/jawad374/ecommerce-fullstack-design/issues) · [**✨ Request Feature**](https://github.com/jawad374/ecommerce-fullstack-design/issues)
+[**🚀 Live**](https://ecommerce-fullstack-design-chi.vercel.app/) ·[**📹 Video**](https://drive.google.com/file/d/1AUvKmmBdKr4qx24bWbWeiDkZHhfv5eqn/view?usp=drive_link) [**🐛 Report Bug**](https://github.com/jawad374/ecommerce-fullstack-design/issues) · [**✨ Request Feature**](https://github.com/jawad374/ecommerce-fullstack-design/issues)
 
 ---
 
