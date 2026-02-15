@@ -128,18 +128,46 @@ The project follows a modular, feature-based architecture pattern.
 
 ---
 
-## 🔌 API Reference
+## � Application Routes & API
 
-The application exposes the following internal API endpoints:
+### 🖥️ Client Pages
 
-| Method | Endpoint | Description | Public/Private |
+| Route | Description | Access |
+|:---|:---|:---|
+| `/` | Landing page with featured items | Public |
+| `/products` | Full catalog to filter & sort | Public |
+| `/product/[id]` | Detailed product view | Public |
+| `/cart` | Shopping cart & checkout flow | Public |
+| `/login` | Authentication (Login/Register) | Public |
+| `/admin` | Dashboard overview | **Admin** |
+| `/admin/products` | Inventory list | **Admin** |
+| `/admin/products/add` | Create new product | **Admin** |
+| `/admin/products/edit/[id]` | Update product details | **Admin** |
+| `/admin/users` | Manage customer accounts | **Admin** |
+
+### 🔌 API Endpoints
+
+#### 📦 Products
+| Method | Endpoint | Description | Details |
 |:---|:---|:---|:---|
-| `GET` | `/api/products` | Fetch all products (with filters) | Public |
-| `GET` | `/api/products/:id` | Get single product details | Public |
-| `POST` | `/api/products` | Create new product | **Admin** |
-| `PUT` | `/api/products/:id` | Update product details | **Admin** |
-| `DELETE` | `/api/products/:id` | Remove product | **Admin** |
-| `POST` | `/api/auth/login` | User authentication | Public |
+| `GET` | `/api/products` | List/Filter products | Query params: `category`, `search` |
+| `POST` | `/api/products` | Create product | Requires FormData (files + fields) |
+| `GET` | `/api/products/:id` | Get single product | Returns full object |
+| `PUT` | `/api/products/:id` | Update product | Supports partial updates |
+| `DELETE` | `/api/products/:id` | Remove product | Soft or hard delete |
+
+#### 🔐 Authentication
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `POST` | `/api/auth/signup` | Register new user |
+| `POST` | `/api/auth/login` | Login session |
+| `POST` | `/api/auth/logout` | Destroy session |
+| `GET` | `/api/auth/me` | Validate session |
+
+#### 👥 Users
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `GET` | `/api/users` | List all registered users (Admin only) |
 
 ---
 
