@@ -46,7 +46,7 @@ export async function PUT(request, { params }) {
     
     // Extract textual data
     const updateData = {};
-    const textFields = ['name', 'description', 'category', 'brand', 'type', 'material', 'design', 'customization', 'protection', 'warranty'];
+    const textFields = ['name', 'description', 'category', 'brand', 'type', 'material', 'design', 'customization', 'protection', 'warranty', 'status'];
     textFields.forEach(field => {
         const val = formData.get(field);
         if (val) updateData[field] = val;

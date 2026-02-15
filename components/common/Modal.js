@@ -3,7 +3,7 @@
 import { X, CheckCircle, AlertCircle } from 'lucide-react';
 import { useEffect } from 'react';
 
-export default function Modal({ isOpen, onClose, title, message, type = 'success' }) {
+export default function Modal({ isOpen, onClose, title, message, type = 'success', children }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -40,22 +40,26 @@ export default function Modal({ isOpen, onClose, title, message, type = 'success
 
         {/* content */}
         <div className="p-6">
-          <p className="text-gray-600">{message}</p>
+          {children ? children : (
+             <p className="text-gray-600">{message}</p>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="p-4 bg-gray-50 flex justify-end">
-          <button 
-            onClick={onClose}
-            className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
-              type === 'success' 
-                ? 'bg-green-600 hover:bg-green-700' 
-                : 'bg-red-600 hover:bg-red-700'
-            }`}
-          >
-            {type === 'success' ? 'Continue' : 'Close'}
-          </button>
-        </div>
+        {/* Footer - Only show if no children provided (default alert mode) */}
+        {!children && (
+          <div className="p-4 bg-gray-50 flex justify-end">
+            <button 
+              onClick={onClose}
+              className={`px-4 py-2 rounded-lg text-white font-medium transition-colors ${
+                type === 'success' 
+                  ? 'bg-green-600 hover:bg-green-700' 
+                  : 'bg-red-600 hover:bg-red-700'
+              }`}
+            >
+              {type === 'success' ? 'Continue' : 'Close'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

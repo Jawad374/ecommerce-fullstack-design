@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Plus, Edit2, Trash2, Search, Filter, Upload } from 'lucide-react';
 import Modal from '@/components/common/Modal';
 
@@ -8,31 +9,8 @@ export default function ProductsPage() {
   // Products management page
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [formData, setFormData] = useState({ 
-    id: null, 
-    name: '', 
-    description: '',
-    category: '', 
-    price: '', 
-    oldPrice: '',
-    stock: '', 
-    status: 'Active',
-    brand: '',
-    rating: '',
-    type: '',
-    material: '',
-    design: '',
-    customization: '',
-    protection: '',
-    warranty: '',
-    existingImages: [],
-    newImages: []
-  });
-  const [newImagePreviews, setNewImagePreviews] = useState([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     fetchProducts();
@@ -43,10 +21,11 @@ export default function ProductsPage() {
       const response = await fetch('/api/products');
       if (response.ok) {
         const data = await response.json();
-        const formattedData = data.map(item => ({
+        const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        const formattedData = sortedData.map(item => ({
              ...item,
              id: item._id, // Map MongoDB _id to id for frontend
-             status: item.stock > 0 ? 'Active' : 'Out of Stock' // Derive status if not explicit
+             status: item.status || (item.stock > 0 ? 'Active' : 'Out of Stock') // Derive status if not explicit
         }));
         setProducts(formattedData);
       }
@@ -55,16 +34,6 @@ export default function ProductsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleEdit = (product) => {
-    setFormData({
-      ...product,
-      existingImages: product.images || [],
-      newImages: []
-    });
-    setNewImagePreviews([]);
-    setIsFormOpen(true);
   };
 
   const handleDeleteClick = (product) => {
@@ -95,109 +64,6 @@ export default function ProductsPage() {
     }
   };
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        newImages: [...prev.newImages, ...files]
-      }));
-      
-      const newPreviews = files.map(file => URL.createObjectURL(file));
-      setNewImagePreviews(prev => [...prev, ...newPreviews]);
-    }
-  };
-
-  const removeExistingImage = (indexToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      existingImages: prev.existingImages.filter((_, index) => index !== indexToRemove)
-    }));
-  };
-
-  const removeNewImage = (indexToRemove) => {
-    setFormData(prev => ({
-      ...prev,
-      newImages: prev.newImages.filter((_, index) => index !== indexToRemove)
-    }));
-    setNewImagePreviews(prev => prev.filter((_, index) => index !== indexToRemove));
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const data = new FormData();
-      data.append('name', formData.name);
-      data.append('description', formData.description);
-      data.append('category', formData.category);
-      data.append('price', formData.price);
-      if (formData.oldPrice) data.append('oldPrice', formData.oldPrice);
-      data.append('stock', formData.stock);
-      data.append('brand', formData.brand);
-      if (formData.rating) data.append('rating', formData.rating);
-      if (formData.type) data.append('type', formData.type);
-      if (formData.material) data.append('material', formData.material);
-      if (formData.design) data.append('design', formData.design);
-      if (formData.customization) data.append('customization', formData.customization);
-      if (formData.protection) data.append('protection', formData.protection);
-      if (formData.warranty) data.append('warranty', formData.warranty);
-      
-      // Append existing images
-      formData.existingImages.forEach(img => data.append('existingImages', img));
-
-      // Append new images
-      formData.newImages.forEach(file => {
-        data.append('newImages', file);
-      });
-
-      const url = formData.id ? `/api/products/${formData.id}` : '/api/products';
-      const method = formData.id ? 'PUT' : 'POST';
-      
-      const res = await fetch(url, {
-        method: method,
-        body: data,
-      });
-
-      if (res.ok) {
-        await fetchProducts();
-        setIsFormOpen(false);
-        resetForm();
-      } else {
-        console.error('Failed to save product');
-      }
-    } catch (error) {
-      console.error('Error saving product:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const resetForm = () => {
-    setFormData({ 
-      id: null, 
-      name: '', 
-      description: '',
-      category: '', 
-      price: '', 
-      oldPrice: '',
-      stock: '', 
-      status: 'Active',
-      brand: '',
-      rating: '',
-      type: '',
-      material: '',
-      design: '',
-      customization: '',
-      protection: '',
-      warranty: '',
-      existingImages: [],
-      newImages: []
-    });
-    setNewImagePreviews([]);
-  };
-
   if (isLoading) return <div className="p-8 text-center">Loading products...</div>;
 
   return (
@@ -207,16 +73,13 @@ export default function ProductsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Products</h1>
           <p className="text-gray-500">Manage your product inventory</p>
         </div>
-        <button 
-          onClick={() => {
-            resetForm();
-            setIsFormOpen(true);
-          }}
+        <Link 
+          href="/admin/products/add"
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
         >
           <Plus size={20} />
           Add Product
-        </button>
+        </Link>
       </div>
 
       {/* Filters Bar */}
@@ -278,12 +141,12 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button 
-                        onClick={() => handleEdit(product)}
+                      <Link 
+                        href={`/admin/products/edit/${product.id}`}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       >
                          <Edit2 size={18} />
-                      </button>
+                      </Link>
                       <button 
                          onClick={() => handleDeleteClick(product)}
                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -299,200 +162,6 @@ export default function ProductsPage() {
         </div>
       </div>
       
-      {/* Product Form Modal */}
-      {isFormOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 overflow-y-auto">
-           <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-6 animate-in zoom-in-95 duration-200 my-8">
-              <div className="flex justify-between items-center mb-6">
-                 <h2 className="text-xl font-bold">{formData.id ? 'Edit Product' : 'Add New Product'}</h2>
-                 <button onClick={() => setIsFormOpen(false)} className="text-gray-400 hover:text-gray-600">
-                    <span className="sr-only">Close</span>
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                 </button>
-              </div>
-              
-              <form onSubmit={handleSave} className="space-y-6">
-                  {/* Basic Info Section */}
-                  <div className="bg-gray-50 p-4 rounded-xl space-y-4">
-                      <h3 className="font-semibold text-gray-900">Basic Information</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={formData.name}
-                            onChange={(e) => setFormData({...formData, name: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. GoPro HERO6 4K Action Camera"
-                          />
-                        </div>
-                         <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                          <textarea 
-                            required
-                            value={formData.description}
-                            onChange={(e) => setFormData({...formData, description: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="Product description..."
-                            rows={3}
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                          <input 
-                            type="text" 
-                            required
-                            value={formData.category}
-                            onChange={(e) => setFormData({...formData, category: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Electronics"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
-                          <input 
-                            type="text" 
-                            value={formData.brand}
-                            onChange={(e) => setFormData({...formData, brand: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                            placeholder="e.g. Samsung"
-                          />
-                        </div>
-                         {/* Image Upload */}
-                         <div className="md:col-span-2">
-                             <label className="block text-sm font-medium text-gray-700 mb-1">Product Images</label>
-                             <div className="flex flex-wrap items-center gap-4">
-                                 {/* Existing Images */}
-                                 {formData.existingImages.map((img, index) => (
-                                     <div key={`existing-${index}`} className="relative w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 group">
-                                         <img src={img} alt="Existing" className="w-full h-full object-cover" />
-                                         <button
-                                           type="button"
-                                           onClick={() => removeExistingImage(index)}
-                                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                                         >
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                                         </button>
-                                     </div>
-                                 ))}
-
-                                 {/* New Images Previews */}
-                                 {newImagePreviews.map((preview, index) => (
-                                     <div key={`new-${index}`} className="relative w-20 h-20 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 group">
-                                         <img src={preview} alt="New Preview" className="w-full h-full object-cover" />
-                                         <button
-                                           type="button"
-                                           onClick={() => removeNewImage(index)}
-                                           className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
-                                         >
-                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                                         </button>
-                                     </div>
-                                 ))}
-
-                                 <label className="cursor-pointer flex flex-col items-center justify-center w-20 h-20 rounded-lg border-2 border-dashed border-gray-300 hover:bg-gray-50 transition-colors">
-                                     <Upload size={18} className="text-gray-400" />
-                                     <span className="text-[10px] text-gray-500 mt-1">Add</span>
-                                     <input type="file" className="hidden" accept="image/*" multiple onChange={handleImageChange} />
-                                 </label>
-                             </div>
-                         </div>
-                      </div>
-                  </div>
-
-                  {/* Pricing & Stock */}
-                  <div className="bg-gray-50 p-4 rounded-xl space-y-4">
-                      <h3 className="font-semibold text-gray-900">Pricing & Inventory</h3>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
-                          <input 
-                            type="number" 
-                            required
-                            value={formData.price}
-                            onChange={(e) => setFormData({...formData, price: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Old Price ($)</label>
-                          <input 
-                            type="number" 
-                            value={formData.oldPrice}
-                            onChange={(e) => setFormData({...formData, oldPrice: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Stock</label>
-                          <input 
-                            type="number" 
-                            required
-                            value={formData.stock}
-                            onChange={(e) => setFormData({...formData, stock: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                          <select 
-                            value={formData.status}
-                            onChange={(e) => setFormData({...formData, status: e.target.value})}
-                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none"
-                          >
-                             <option value="Active">Active</option>
-                             <option value="Disabled">Disabled</option>
-                          </select>
-                        </div>
-                      </div>
-                  </div>
-
-                  {/* Details */}
-                  <div className="bg-gray-50 p-4 rounded-xl space-y-4">
-                      <h3 className="font-semibold text-gray-900">Specifications</h3>
-                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-                                <input type="text" value={formData.type} onChange={(e) => setFormData({...formData, type: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
-                            </div>
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Material</label>
-                                <input type="text" value={formData.material} onChange={(e) => setFormData({...formData, material: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
-                            </div>
-                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Design</label>
-                                <input type="text" value={formData.design} onChange={(e) => setFormData({...formData, design: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
-                            </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Warranty</label>
-                                <input type="text" value={formData.warranty} onChange={(e) => setFormData({...formData, warranty: e.target.value})} className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none" />
-                            </div>
-                       </div>
-                  </div>
-
-                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                     <button 
-                       type="button" 
-                       onClick={() => setIsFormOpen(false)}
-                       className="px-5 py-2.5 text-gray-600 font-medium hover:bg-gray-100 rounded-lg transition-colors"
-                       disabled={isSubmitting}
-                     >
-                       Cancel
-                     </button>
-                     <button 
-                       type="submit"
-                       className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50"
-                       disabled={isSubmitting}
-                     >
-                       {isSubmitting ? 'Saving...' : (formData.id ? 'Save Changes' : 'Create Product')}
-                     </button>
-                  </div>
-              </form>
-           </div>
-        </div>
-      )}
-
       <Modal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

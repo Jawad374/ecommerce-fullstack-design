@@ -39,6 +39,7 @@ export async function POST(request) {
     const customization = formData.get('customization');
     const protection = formData.get('protection');
     const warranty = formData.get('warranty');
+    const status = formData.get('status');
     
     // Handle image upload (multiple)
     const files = formData.getAll('newImages'); // Get all new files
@@ -95,7 +96,8 @@ export async function POST(request) {
       design,
       customization,
       protection,
-      warranty
+      warranty,
+      status: status || 'Active'
     });
 
     return NextResponse.json(product, { status: 201 });
