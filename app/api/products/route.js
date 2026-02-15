@@ -103,6 +103,10 @@ export async function POST(request) {
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error('Error creating product:', error);
-    return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(val => val.message);
+      return NextResponse.json({ message: messages.join(', ') }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'Failed to create product' }, { status: 500 });
   }
 }

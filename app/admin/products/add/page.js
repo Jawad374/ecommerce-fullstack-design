@@ -20,6 +20,7 @@ export default function AddProductPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [imagePreviews, setImagePreviews] = useState([]);
   
   const [formData, setFormData] = useState({
@@ -72,6 +73,7 @@ export default function AddProductPage() {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
+    setFieldErrors({});
 
     try {
       const data = new FormData();
@@ -101,7 +103,22 @@ export default function AddProductPage() {
       }
     } catch (err) {
       console.error('Error creating product:', err);
-      setError(err.message || 'Something went wrong. Please try again.');
+      // Parse validation errors
+      const msg = err.message || '';
+      const newFieldErrors = {};
+      
+      if (msg.includes('product name')) newFieldErrors.name = 'Product Name is required';
+      if (msg.includes('description')) newFieldErrors.description = 'Description is required';
+      if (msg.includes('category')) newFieldErrors.category = 'Category is required';
+      if (msg.includes('price')) newFieldErrors.price = 'Valid Price is required';
+      if (msg.includes('stock')) newFieldErrors.stock = 'Stock is required';
+      
+      if (Object.keys(newFieldErrors).length > 0) {
+          setFieldErrors(newFieldErrors);
+          setError('Please fix the highlighted errors below.');
+      } else {
+          setError(msg || 'Something went wrong. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -181,8 +198,11 @@ export default function AddProductPage() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="e.g. Premium Leather Jacket"
-                    className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+                    className={`w-full px-4 py-2 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 ${
+                        fieldErrors.name ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
                   />
+                  {fieldErrors.name && <p className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
@@ -193,8 +213,11 @@ export default function AddProductPage() {
                     value={formData.description}
                     onChange={handleChange}
                     placeholder="Describe your product clearly..."
-                    className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 resize-y"
+                    className={`w-full px-4 py-2 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none transition-all placeholder:text-gray-400 resize-y ${
+                        fieldErrors.description ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                    }`}
                   />
+                  {fieldErrors.description && <p className="mt-1 text-sm text-red-600">{fieldErrors.description}</p>}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -238,14 +261,19 @@ export default function AddProductPage() {
               </div>
               <div className="p-6">
                 {imagePreviews.length === 0 ? (
-                    <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-gray-50 hover:border-blue-400 transition-all bg-gray-50/30">
-                        <div className="p-4 bg-white rounded-full shadow-sm mb-3">
-                            <ImageIcon size={24} className="text-blue-500" />
-                        </div>
-                        <p className="text-gray-900 font-medium mb-1">Click or drag images here</p>
-                        <p className="text-sm text-gray-500">SVG, PNG, JPG or GIF (max. 800x400px)</p>
-                        <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
-                    </label>
+                    <div>
+                        <label className={`flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-xl cursor-pointer hover:bg-gray-50 transition-all bg-gray-50/30 ${
+                            fieldErrors.images ? 'border-red-300 bg-red-50/10' : 'border-gray-300 hover:border-blue-400'
+                        }`}>
+                            <div className="p-4 bg-white rounded-full shadow-sm mb-3">
+                                <ImageIcon size={24} className={fieldErrors.images ? "text-red-500" : "text-blue-500"} />
+                            </div>
+                            <p className="text-gray-900 font-medium mb-1">Click or drag images here</p>
+                            <p className="text-sm text-gray-500">SVG, PNG, JPG or GIF (max. 800x400px)</p>
+                            <input type="file" multiple accept="image/*" onChange={handleImageChange} className="hidden" />
+                        </label>
+                        {fieldErrors.images && <p className="mt-2 text-sm text-red-600 text-center">{fieldErrors.images}</p>}
+                    </div>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {imagePreviews.map((preview, index) => (
@@ -333,8 +361,11 @@ export default function AddProductPage() {
                             value={formData.category}
                             onChange={handleChange}
                             placeholder="e.g. Electronics"
-                            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                            className={`w-full px-4 py-2 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none transition-all ${
+                                fieldErrors.category ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                            }`}
                         />
+                         {fieldErrors.category && <p className="mt-1 text-sm text-red-600">{fieldErrors.category}</p>}
                     </div>
                 </div>
             </div>
@@ -357,9 +388,12 @@ export default function AddProductPage() {
                                 value={formData.price}
                                 onChange={handleChange}
                                 placeholder="0.00"
-                                className="w-full pl-8 pr-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                                className={`w-full pl-8 pr-4 py-2 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none transition-all ${
+                                    fieldErrors.price ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                                }`}
                             />
                         </div>
+                        {fieldErrors.price && <p className="mt-1 text-sm text-red-600">{fieldErrors.price}</p>}
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Compare at Price</label>
@@ -395,8 +429,11 @@ export default function AddProductPage() {
                             value={formData.stock}
                             onChange={handleChange}
                             placeholder="0"
-                            className="w-full px-4 py-2 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                            className={`w-full px-4 py-2 bg-white border rounded-lg focus:ring-2 focus:ring-blue-500/20 outline-none transition-all ${
+                                fieldErrors.stock ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-blue-500'
+                            }`}
                         />
+                        {fieldErrors.stock && <p className="mt-1 text-sm text-red-600">{fieldErrors.stock}</p>}
                     </div>
                  </div>
             </div>
